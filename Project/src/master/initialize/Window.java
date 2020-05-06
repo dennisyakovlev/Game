@@ -25,7 +25,6 @@ public class Window extends Application {
 		
 		Canvas c = new Canvas(Constant.sceneWidth, Constant.sceneHeight);
 		pane.getChildren().add(c);
-		InitValue.setCanvas(c);
 		
 		pane.setPrefSize(Constant.sceneWidth, Constant.sceneHeight);
 		

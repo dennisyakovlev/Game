@@ -10,24 +10,24 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import javafx.scene.canvas.GraphicsContext;
 import master.exceptions.ImageException;
 import master.object.Object;
-import master.variables.Program;
 
 public class Image extends Object {	
 	
 	private int length;
-	private String name;
 	private String classPath;
 	private FileInputStream inputStream = null;
 	private BufferedImage image = null;
-	private ArrayList<Color> pixels = new ArrayList<>();
+	private ArrayList<javafx.scene.paint.Color> pixels = new ArrayList<>();
 	private ArrayList<int[]> positions = new ArrayList<>();
+	private String imageName;
 	
 	
-	public Image(String name) {
-		this.name = name;
+	public Image(String imageName, String objectName) {
+		super(objectName);
+		
+		this.imageName = imageName;
 		
 		setImage();
 	}
@@ -36,7 +36,7 @@ public class Image extends Object {
 
 		try {
 			classPath = new File(Image.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString();
-			inputStream = new FileInputStream(classPath + "\\src\\image\\files\\" + name);
+			inputStream = new FileInputStream(classPath + "\\src\\image\\files\\" + imageName);
 			image = ImageIO.read(inputStream);
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
@@ -55,30 +55,51 @@ public class Image extends Object {
 	
 	public void convertToUsable(Color toRemove) {
 		
+		if (toRemove == null) {
+			
+			directAdd();
+			
+		} else {
+			
+			indirectAdd(toRemove);
+		
+		}
+
+		setData(pixels.toArray(new javafx.scene.paint.Color[pixels.size()]), positions.toArray(new int[positions.size()][2]));
+	}
+	
+	
+	private void directAdd() {
+		
+		for (int i = 0; i < 270; i++) {
+			for (int j = 0; j < 640; j++) {
+				
+				Color color = new Color(image.getRGB(j, i));
+				pixels.add(javafx.scene.paint.Color.rgb(color.getRed(), color.getGreen(), color.getBlue()));
+				positions.add(new int[] {j, i});
+				
+			}
+			
+		}
+		
+	}
+	
+	private void indirectAdd(Color toRemove) {
+	
 		for (int i = 0; i < 270; i++) {
 			for (int j = 0; j < 640; j++) {
 				
 				Color color = new Color(image.getRGB(j, i));
 
 				if (Math.abs(color.getGreen() - toRemove.getGreen()) > 2 && Math.abs(color.getRed() - toRemove.getRed()) > 2 && Math.abs(color.getBlue() - toRemove.getBlue()) > 2) {
-					pixels.add(color);
+					pixels.add(javafx.scene.paint.Color.rgb(color.getRed(), color.getGreen(), color.getBlue()));
 					positions.add(new int[] {j, i});
 				}
 
 			}
 			
 		}
-
-	}
-	
-	public void test() {
-		GraphicsContext gc = Program.canvas.getGraphicsContext2D();
 		
-		gc.fillRect(639, 269, 1, 1);
-		for (int i = 0; i < positions.size(); i++) {
-			gc.setFill(javafx.scene.paint.Color.rgb(pixels.get(i).getRed(), pixels.get(i).getGreen(), pixels.get(i).getBlue()));
-			gc.fillRect(positions.get(i)[0], positions.get(i)[1], 1, 1);
-		}
 	}
-	
+
 }
