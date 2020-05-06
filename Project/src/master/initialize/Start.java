@@ -1,4 +1,4 @@
-package initialize;
+package master.initialize;
 //get image process it check each pixel, get pixel info, create squares
 
 
