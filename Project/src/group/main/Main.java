@@ -20,6 +20,7 @@ public class Main {
 		b.convertToUsable(new Color(0, 0, 0));
 
 		/*
+		 * 
 		Image c = new Image("background.png", "c");
 		c.convertToUsable(new Color(104, 58, 183));
 		
