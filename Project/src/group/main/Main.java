@@ -34,12 +34,17 @@ public class Main {
 		Scene scene = new Scene("blue", "testscene");
 		
 		scene.addChild(a, 2);
-		scene.addChild(b, 3);
+		//scene.addChild(b, 3);
 		//scene.addChild(c, 2);
 		//scene.addChild(d, 17);
 		//scene.addChild(e, 5);
 		
-		scene.update();
+		//scene.update();
+		//scene.test();
+		//scene.test7();
+		
+		scene.create(a);
+		scene.draw();
 		
 		scene.show();
 		
