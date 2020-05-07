@@ -1,8 +1,8 @@
-package master.initialize;
+package preinit;
 
 import java.io.IOException;
 
-import group.main.Main;
+import init.Start;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,8 +10,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import master.variables.Constant;
-import master.variables.InitValue;
+import variables.Constant;
+import variables.InitValue;
 
 public class Window extends Application {
 	
@@ -36,7 +36,7 @@ public class Window extends Application {
         primaryStage.show();
 
              
-        Main m = new Main(pane);
+        Start.firstMethod();
 	}
 
 

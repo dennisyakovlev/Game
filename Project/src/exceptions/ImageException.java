@@ -1,4 +1,4 @@
-package master.exceptions;
+package exceptions;
 
 public class ImageException extends RuntimeException {
 	public ImageException(String message) {
