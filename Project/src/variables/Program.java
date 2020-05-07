@@ -1,6 +1,5 @@
-package master.variables;
+package variables;
 
-import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
 
 public abstract class Program {

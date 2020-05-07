@@ -1,4 +1,4 @@
-package master.initialize;
+package preinit;
 
 public class Start {
 	public static void main(String[] args) {
