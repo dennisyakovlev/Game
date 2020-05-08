@@ -13,25 +13,16 @@ public abstract class Start {
 	public static Node bg;
 
 	public static void firstMethod() {
-		Object object = new Object(0, 0, "yurr.png", "bg");
-
+		
+		Object object = new Object(0, 0, "background.png", "bg");
 		object.setImage();
-		object.removeBackground(null);
-
-
-
-
-
-
-
+		object.removeBackground(Color.rgb(0, 0, 0));
+		object.process();
 
 		Scene scene = new Scene();
 		scene.addObject(object);
-		scene.display();
+		scene.initalUpdate();
 		scene.add();
-
-
-
 
 	}
 	
