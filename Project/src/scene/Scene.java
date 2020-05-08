@@ -1,7 +1,10 @@
 package scene;
 
+import init.Start;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import objects.Object;
 import variables.Program;
@@ -36,6 +39,7 @@ import variables.Program;
 public class Scene extends Canvas {
 	
 	private GraphicsContext gc;
+	private Object child;
 	
 	public Scene() {
 		
@@ -43,23 +47,36 @@ public class Scene extends Canvas {
 		
 		setWidth(670);
 		setHeight(270);
+
+
+
 		
 	}
 	
 	public void addObject(Object object) {
-		
-		
-		
+
+		child = object;
+
 	}
 	
 	public void display() {
-		//right here actually display the stuff
-	}
+
+		int[][] positions = child.getGamePixelPositions();
+		Color[] colors = child.getPixelColor();
+
+		for (int currentPixel = 0; currentPixel < positions.length; currentPixel ++) {
+
+			gc.setFill(colors[currentPixel]);
+			gc.fillRect(positions[currentPixel][0], positions[currentPixel][1], 5, 5);
+
+		}
+
+    }
 	
 	public void fill(Color color) {
 		
 		gc.setFill(color);
-		
+
 		for (int i = 0; i < 270; i++) {
 			for (int j = 0; j < 640; j++) {
 				
@@ -73,7 +90,8 @@ public class Scene extends Canvas {
 	
 	public void add() {
 		Program.mainPane.getChildren().add(this);
-	}
+
+    }
 	
 	public void toFront() {
 		
