@@ -31,7 +31,7 @@ public abstract class Start {
 		d.process();
 		*/
 		
-		Object tree = new Object(10, 0, "background.png", "bg4");
+		Object tree = new Object(100, 100, "background.png", "bg4");
 		tree.setImage();
 		tree.removeBackground(null);
 		tree.process();

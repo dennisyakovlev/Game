@@ -106,13 +106,14 @@ public class Scene extends Canvas {
 			 */
 			final int visibleY = (y < 270) && (y > -height) ? (y < 0 ? -(height - (height + y)) : (y + height) > 270 ? height - y : height) : 0;
 			
-			//System.out.println(visibleX + " " + visibleY);
-			//have to get position and color pixels only on screen
-			
 			ArrayList<int[]> positions = new ArrayList<>();
 			ArrayList<Color> colors = new ArrayList<>();
 			
-			if (visibleX < 0 && visibleY < 0) { //flows off top and left of screen (100% sure for both)
+			if (visibleX == child.getGameWidthInPixels() && visibleY == child.getGameHeightInPixels()) {
+				positions = child.getPositions();
+				colors = child.getColors();
+				
+			} else if (visibleX < 0 && visibleY < 0) { 
 				
 				
 				
@@ -122,19 +123,18 @@ public class Scene extends Canvas {
 				
 			} else if (visibleX > 0 && visibleY < 0) {
 				
-				
+				//positions = child.getSpecificPixels(0, 0, visibleX, visibleY);
+				//colors = child.getSpecificColors(0, 0, visibleX, visibleY);
 				
 			} else if (visibleX > 0 && visibleY > 0) {
 
-				System.out.println(visibleX + " " + visibleY);
-				 positions = child.getSpecificPixels(0, 0, visibleX, visibleY);
-				 colors = child.getSpecificColors(0, 0, visibleX, visibleY);
+				positions = child.getSpecificPixels(0, 0, visibleX, visibleY);
+				colors = child.getSpecificColors(0, 0, visibleX, visibleY);
 				
 			}
+
 			
-			//System.out.println(positions.size());
 			for (int currentPixel = 0; currentPixel < positions.size(); currentPixel ++) {
-				//System.out.println(visibleX + " " + visibleY + " " + currentPixel);
 				gc.setFill(colors.get(currentPixel));
 				gc.fillRect(positions.get(currentPixel)[0], positions.get(currentPixel)[1], 5, 5);
 

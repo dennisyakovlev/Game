@@ -28,7 +28,7 @@ public class Object {
 	private BufferedImage image;
 	private ArrayList<Color> colorsTemp = new ArrayList<>();
 	private ArrayList<int[]> positionsTemp = new ArrayList<>();
-	private int[][] positions;
+	//private int[][] positions;
 	private Color[] colors;
 	private boolean removeBackground = false, setImage = false, process = false;
 	private int importance;
@@ -68,6 +68,9 @@ public class Object {
 				
 				java.awt.Color pixelColor = new java.awt.Color(image.getRGB(j, i));
 				
+				/*
+				 * set *which* squares will actually exist
+				 */
 				if (colorToRemove == null) {
 					
 					colorsTemp.add(Color.rgb(pixelColor.getRed(), pixelColor.getGreen(), pixelColor.getBlue()));
@@ -133,8 +136,8 @@ public class Object {
 			throw new ImageException("yurr not supposed to see this shoot it if this appears");
 		}
 		
-		positions = new int[positionsTemp.size()][2];
-		gamePositions = new int[positions.length][2];
+		//positions = new int[positionsTemp.size()][2];
+		gamePositions = new int[positionsTemp.size()][2];
 		colors = new Color[colorsTemp.size()];
 		
 		leftMostPixel = positionsTemp.get(0)[0];
@@ -156,37 +159,60 @@ public class Object {
 		width = rightMostPixel - leftMostPixel + 1;
 		height = bottomMostPixel - topMostPixel + 1;
 		
-		for (int i = 0; i < positions.length; i++) {
+		for (int i = 0; i < gamePositions.length; i++) {
 			
-			positions[i] = new int[] {positionsTemp.get(i)[0] - leftMostPixel, positionsTemp.get(i)[1] - topMostPixel};
 			colors[i] = colorsTemp.get(i);	
-			gamePositions[i] = new int[] {positions[i][0] * 5, positions[i][1] * 5};
+			/*
+			 * actually sets the positions the squares will be in
+			 */
+			//gamePositions[i] = new int[] {((positionsTemp.get(i)[0] - leftMostPixel) * 5) + x, ((positionsTemp.get(i)[1] - topMostPixel) * 5) + y}; actual code
+			gamePositions[i] = new int[] {((positionsTemp.get(i)[0] - leftMostPixel) * 5), ((positionsTemp.get(i)[1] - topMostPixel) * 5)}; 
 			
 		}
 		
-		length = positions.length;
+		length = gamePositions.length;
 	}		
+	
+	public ArrayList<int[]> getPositions() {
+		
+		ArrayList<int[]> temp = new ArrayList<>(Arrays.asList(gamePositions));
+		
+		return temp;
+		
+	}
+	
+	public ArrayList<Color> getColors() {
+		
+		ArrayList<Color> temp = new ArrayList<>(Arrays.asList(colors));
+		
+		return temp;
+		
+	}
 	
 	public int[][] getInitialGamePixelPositions() {
 		
+		/*
 		int[][] temp = new int[positions.length][2];
 		
 		for (int i = 0; i < positionsTemp.size(); i++) {
 			temp[i] = new int[] {(positions[i][0] * 5) +  x, (positions[i][1] * 5) + y};
 		}	
+		*/
 		
-		return temp;
+		return gamePositions;
 	}
 	
 	public Color[] getInitialPixelColor() {
 
+		/*
 		Color[] temp2 = new Color[colorsTemp.size()];
 		
 		for (int i = 0; i < colorsTemp.size(); i++) {
 			temp2[i] = colorsTemp.get(i);
 		}
+		*/
 		
-		return temp2;
+		return colors;
 	}
 	
 	public void check() {
@@ -237,23 +263,49 @@ public class Object {
 	//in pixel values - endX <= 128 endY <= 54
 	public ArrayList<int[]> getSpecificPixels(int startX, int startY, int endX, int endY) {
 		
-		endX -= 5;
-		endY -= 5;
+		//endX -= 5;
+		//endY -= 5;
 		ArrayList<int[]> temp = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(gamePositions, (roundUp(startY) * width) + roundUp(startX), 1 + (roundUp(endY) * width) + roundUp(endX))));
+		
+		ArrayList<int[]> pos = new ArrayList<>();
+		
+		for (int i = roundUp(startY); i < roundUp(endY); i++) {
+			
+			for (int j = roundUp(startX); j < roundUp(endX); j++) {
+				
+				pos.add(gamePositions[(i * width) + j]);
+				
+			}
+			
+		}
 		
 		//System.out.println(gamePositions[gamePositions.length - 1][0]);
 		//System.out.println(temp.get(temp.size() - 1)[0]);
 		
-		return temp;
+		return pos;
 		
 	}
 	
 	public ArrayList<Color> getSpecificColors(int startX, int startY, int endX, int endY) { 
 		
-		endX -= 5;
-		endY -= 5;
-		return new ArrayList<>(Arrays.asList(Arrays.copyOfRange(colors, (roundUp(startY) * width) + roundUp(startX), 1 + (roundUp(endY) * width) + roundUp(endX))));
+		//endX -= 5;
+		//endY -= 5;
+		//return new ArrayList<>(Arrays.asList(Arrays.copyOfRange(colors, (roundUp(startY) * width) + roundUp(startX), 1 + (roundUp(endY) * width) + roundUp(endX))));
 		
+		ArrayList<Color> c = new ArrayList<>();
+		
+		for (int i = roundUp(startY); i < roundUp(endY); i++) {
+			
+			for (int j = roundUp(startX); j < roundUp(endX); j++) {
+				
+				c.add(colors[(i * width) + j]);
+				
+			}
+			
+		}
+		
+		
+		return c;
 	}
 	
 	public void setImportance(int importance) {
