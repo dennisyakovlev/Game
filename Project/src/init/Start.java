@@ -1,29 +1,56 @@
 package init;
 
-import javafx.scene.Node;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.animation.AnimationTimer;
 import javafx.scene.paint.Color;
 import objects.Object;
 import scene.Scene;
-import variables.Program;
 
 public abstract class Start {
 
-	public static Node bg;
-
 	public static void firstMethod() {
 		
-		Object object = new Object(0, 0, "background.png", "bg");
-		object.setImage();
-		object.removeBackground(Color.rgb(0, 0, 0));
-		object.process();
+		/*
+		Object a = new Object(0, 0, "background.png", "bg");
+		a.setImage();
+		a.removeBackground(Color.rgb(0, 0, 0));
+		a.process();
 
+		Object b = new Object(0, 0, "background.png", "bg2");
+		b.setImage();
+		b.removeBackground(Color.rgb(0, 0, 0));
+		b.process();
+		
+		Object c = new Object(0, 0, "background.png", "bg3");
+		c.setImage();
+		c.removeBackground(Color.rgb(0, 0, 0));
+		c.process();
+		
+		Object d = new Object(0, 0, "background.png", "bg4");
+		d.setImage();
+		d.removeBackground(Color.rgb(0, 0, 0));
+		d.process();
+		*/
+		
+		Object tree = new Object(10, 0, "background.png", "bg4");
+		tree.setImage();
+		tree.removeBackground(null);
+		tree.process();
+		
+		
+		
+		
 		Scene scene = new Scene();
-		scene.addObject(object);
-		scene.initalUpdate();
-		scene.add();
+		scene.addObject(tree, 5);
+		
+		scene.update();
+		
+		//scene.initialUpdate();
+		
 
+		
+		
+		
+		scene.add();
 	}
 	
 }

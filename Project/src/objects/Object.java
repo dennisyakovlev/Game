@@ -1,15 +1,19 @@
 package objects;
 
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import exceptions.ImageException;
+import exceptions.Warn;
 import javafx.scene.paint.Color;
 import variables.Constant;
 
@@ -26,9 +30,18 @@ public class Object {
 	private ArrayList<int[]> positionsTemp = new ArrayList<>();
 	private int[][] positions;
 	private Color[] colors;
+	private boolean removeBackground = false, setImage = false, process = false;
+	private int importance;
+	private int length;
+	private int leftMostPixel, rightMostPixel, topMostPixel, bottomMostPixel;
+	private int[][] gamePositions;
 	
 	
 	public Object(int x, int y, String fileName, String objectName) {
+		
+		if (fileName.equals("") || objectName.equals("")) {
+			throw new ImageException("names cannot be empty");
+		}
 		
 		this.x = x;
 		this.y = y;
@@ -38,6 +51,12 @@ public class Object {
 	}
 	
 	public void removeBackground(Color colorToRemove) {
+		
+		if (removeBackground) {
+			Warn.warn("redundant operation on " + this + " removeBackground");
+		}
+		
+		removeBackground = true;
 		
 		if (image == null) {
 			throw new ImageException("No attempt made to get image from system.");
@@ -74,6 +93,12 @@ public class Object {
 	
 	public void setImage() {
 		
+		if (setImage) {
+			Warn.warn("redundant operation on " + this + " setImage");
+		}
+		
+		setImage = true;
+		
 		String classPath;
 		FileInputStream inputStream;
 		
@@ -98,39 +123,48 @@ public class Object {
 	
 	public void process() {
 		
+		if (process) {
+			Warn.warn("redundant operation on " + this + " process");
+		}
+		
+		process = true;
+		
 		if (positionsTemp.size() != colorsTemp.size()) {
 			throw new ImageException("yurr not supposed to see this shoot it if this appears");
 		}
 		
 		positions = new int[positionsTemp.size()][2];
+		gamePositions = new int[positions.length][2];
 		colors = new Color[colorsTemp.size()];
 		
-		int leftMostPixel = positionsTemp.get(0)[0];
-		int rightMostPixel = positionsTemp.get(0)[0];
+		leftMostPixel = positionsTemp.get(0)[0];
+		rightMostPixel = positionsTemp.get(0)[0];
 		
-		int topMostPixel = positionsTemp.get(0)[1];
-		int bottomMostPixel = positionsTemp.get(0)[1];
+		topMostPixel = positionsTemp.get(0)[1];
+		bottomMostPixel = positionsTemp.get(0)[1];
 		
 		for (int i = 1; i < positionsTemp.size(); i++) {
 			
 			leftMostPixel = Math.min(leftMostPixel, positionsTemp.get(i)[0]);
-			rightMostPixel = Math.max(leftMostPixel, positionsTemp.get(i)[0]);
+			rightMostPixel = Math.max(rightMostPixel, positionsTemp.get(i)[0]);
 			
-			topMostPixel = Math.min(leftMostPixel, positionsTemp.get(i)[1]);
-			bottomMostPixel = Math.max(leftMostPixel, positionsTemp.get(i)[1]);		
-			
-		}
-		
-		for (int i = 0; i < positions.length; i++) {
-			
-			positions[i] = positionsTemp.get(i);
-			colors[i] = colorsTemp.get(i);	
+			topMostPixel = Math.min(topMostPixel, positionsTemp.get(i)[1]);
+			bottomMostPixel = Math.max(topMostPixel, positionsTemp.get(i)[1]);		
 			
 		}
 		
 		width = rightMostPixel - leftMostPixel + 1;
 		height = bottomMostPixel - topMostPixel + 1;
 		
+		for (int i = 0; i < positions.length; i++) {
+			
+			positions[i] = new int[] {positionsTemp.get(i)[0] - leftMostPixel, positionsTemp.get(i)[1] - topMostPixel};
+			colors[i] = colorsTemp.get(i);	
+			gamePositions[i] = new int[] {positions[i][0] * 5, positions[i][1] * 5};
+			
+		}
+		
+		length = positions.length;
 	}		
 	
 	public int[][] getInitialGamePixelPositions() {
@@ -138,7 +172,7 @@ public class Object {
 		int[][] temp = new int[positions.length][2];
 		
 		for (int i = 0; i < positionsTemp.size(); i++) {
-			temp[i] = new int[] {positions[i][0] * 5, positions[i][1] * 5};
+			temp[i] = new int[] {(positions[i][0] * 5) +  x, (positions[i][1] * 5) + y};
 		}	
 		
 		return temp;
@@ -153,6 +187,14 @@ public class Object {
 		}
 		
 		return temp2;
+	}
+	
+	public void check() {
+		
+		if (!removeBackground || !setImage || !process) {
+			throw new ImageException("Necessary processing has not been done to " + this);
+		}
+		
 	}
 	
 	public int getX() {
@@ -179,6 +221,64 @@ public class Object {
 		return height * 5;
 	}
 	
+	public int getImportance() {
+		
+		return importance;
+		
+	}
+
+	public int getNumberOfPixels() {
+		
+		return length;
+		
+	}
+
+	//something to get the necessary array from starting (x1, y1) to ending (x2, y2)
+	//in pixel values - endX <= 128 endY <= 54
+	public ArrayList<int[]> getSpecificPixels(int startX, int startY, int endX, int endY) {
+		
+		endX -= 5;
+		endY -= 5;
+		ArrayList<int[]> temp = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(gamePositions, (roundUp(startY) * width) + roundUp(startX), 1 + (roundUp(endY) * width) + roundUp(endX))));
+		
+		//System.out.println(gamePositions[gamePositions.length - 1][0]);
+		//System.out.println(temp.get(temp.size() - 1)[0]);
+		
+		return temp;
+		
+	}
+	
+	public ArrayList<Color> getSpecificColors(int startX, int startY, int endX, int endY) { 
+		
+		endX -= 5;
+		endY -= 5;
+		return new ArrayList<>(Arrays.asList(Arrays.copyOfRange(colors, (roundUp(startY) * width) + roundUp(startX), 1 + (roundUp(endY) * width) + roundUp(endX))));
+		
+	}
+	
+	public void setImportance(int importance) {
+		
+		this.importance = importance;
+		
+	}
+
+	public void setX(int x) {
+		
+		this.x = x;
+		
+	}
+	
+	public void setY(int y) {
+		
+		this.y = y;
+		
+	}
+
+	private int roundUp(int num) {
+		
+		return ((int) Math.ceil(num / 5.0));
+		
+	}
 }
 
 
