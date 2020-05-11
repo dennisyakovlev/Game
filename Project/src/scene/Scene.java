@@ -7,9 +7,17 @@ import java.util.Map;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.util.Pair;
 import objects.Object;
 import variables.Program;
 
+/*
+ * 
+ * some notes
+ * - if an object has height 100 and y positions of < -95 then the bottom pixels will not display
+ * - if an object has width 100 and x positions of > 540 then the pixels of ONLY the square that go off the screen will be displayed off the screen
+ * 
+*/
 public class Scene extends Canvas {
 	
 	private GraphicsContext gc;
@@ -22,9 +30,11 @@ public class Scene extends Canvas {
 		
 		gc = this.getGraphicsContext2D();
 		
-		setWidth(670);
+		setWidth(640);
 		setHeight(270);
 
+		setLayoutX(-5);
+		setLayoutY(-5);
 	}
 	
 	public void addObject(Object child, int importance) {
@@ -68,20 +78,58 @@ public class Scene extends Canvas {
 		
 	}
 	
-	//6912 pixels to go through, when a pixel is plotted it isnt plotted again **note** shouldnt need as that would create gaps, just draw the specified part of image
-	//int array of 1 and 0, if the position is a 1 it means pixel is free to plot, if 0 it means pixel is plotted and no need to re plot
 	public void update() {
 		
 		gc.clearRect(0,	0, 640, 270);
-		
-		for (int i = 0; i < children.size(); i++) {
+
+		for (int i = children.size() - 1; i >= 0; i--) {
 			
 			final Object child = children.get(i);
 			final int x = child.getX();
 			final int y = child.getY();
-			final int width = child.getGameWidthInPixels();
-			final int height = child.getGameHeightInPixels();
+			final int width = child.getGameWidth();
+			final int height = child.getGameHeight();
+			
 
+			/*
+			 * each variable must be independant
+			 * 
+			 * -1000000 is a value which no object position will ever have, thus,
+			 * used to show object is fully of scene in one dimension
+			 * 
+			 * EITHER startX or endX will have value of -1000000 if object is
+			 * off scene in X direction. Same for startY and endY
+			*/
+			int startX = x < 0 ? -x : (x > 640 ? -1000000 : 0);
+			int endX = x + width > 640 ? 640 - x : (x + width <= 0 ? -1000000 : width);
+			
+			int startY = y < 0 ? -y : (y > 270 ? -1000000 : 0);
+			int endY = y + height > 270 ? 270 - y : (y + height <= 0 ? -1000000 : height);
+			
+			if (startX != -1000000 && startY != -1000000 && endX != -1000000 && endY != -1000000) {
+				
+				ArrayList<int[]> positions = new ArrayList<>();
+				ArrayList<Color> colors = new ArrayList<>();
+				Pair<ArrayList<int[]>, ArrayList<Color>> p = new Pair<ArrayList<int[]>, ArrayList<Color>>(positions, colors);
+				
+				p = child.test(startX, startY, endX, endY);
+				
+				positions = p.getKey();
+				colors = p.getValue();
+				
+				for (int currentPixel = 0; currentPixel < positions.size(); currentPixel ++) {
+					
+					/*
+					 * update the x and y here so that the positions array dont have to be updated in a seperate loop
+					*/
+					gc.setFill(colors.get(currentPixel));
+					gc.fillRect(positions.get(currentPixel)[0], positions.get(currentPixel)[1], 5, 5);
+
+				}
+				
+			}
+			
+			
 			/*
 			 * check1 ? (check2 ? true1 : check3 ? true2 : false1) : false2
 			 * 
@@ -96,7 +144,7 @@ public class Scene extends Canvas {
 			 * 
 			 * between 1 inclusive and 640 inclusive
 			 */
-			final int visibleX = (x < 640) && (x > -width) ? (x < 0 ? -(width - (width + x)) : (x + width) > 640 ? 640 - x : width) : 0; 
+			//final int visibleX = (x < 640) && (x > -width) ? (x < 0 ? -(width - (width + x)) : (x + width) > 640 ? 640 - x : width) : 0; 
 			
 			/*
 			 * same properties as visibleX but for y
@@ -104,84 +152,70 @@ public class Scene extends Canvas {
 			 * true1 - image flows past window to top - returns negative
 			 * true2 - image flows past window to bottom
 			 */
+			
+			/*
 			final int visibleY = (y < 270) && (y > -height) ? (y < 0 ? -(height - (height + y)) : (y + height) > 270 ? height - y : height) : 0;
 			
 			ArrayList<int[]> positions = new ArrayList<>();
 			ArrayList<Color> colors = new ArrayList<>();
+			Pair<ArrayList<int[]>, ArrayList<Color>> p = new Pair<ArrayList<int[]>, ArrayList<Color>>(positions, colors);
 			
-			if (visibleX == child.getGameWidthInPixels() && visibleY == child.getGameHeightInPixels()) {
+			if (visibleX == width && visibleY == height) {
+				
 				positions = child.getPositions();
 				colors = child.getColors();
 				
 			} else if (visibleX < 0 && visibleY < 0) { 
 				
+				p = child.test(-visibleX, -visibleY, width, height);
 				
+				positions = p.getKey();
+				colors = p.getValue();
 				
 			} else if (visibleX < 0 && visibleY > 0) { 
 				
+				p = child.test(-visibleX, 0, width, visibleY);
 				
+				positions = p.getKey();
+				colors = p.getValue();
 				
 			} else if (visibleX > 0 && visibleY < 0) {
 				
-				//positions = child.getSpecificPixels(0, 0, visibleX, visibleY);
-				//colors = child.getSpecificColors(0, 0, visibleX, visibleY);
+				p = child.test(0, -visibleY, visibleX, height);
+				
+				positions = p.getKey();
+				colors = p.getValue();
 				
 			} else if (visibleX > 0 && visibleY > 0) {
 
-				positions = child.getSpecificPixels(0, 0, visibleX, visibleY);
-				colors = child.getSpecificColors(0, 0, visibleX, visibleY);
+				 p = child.test(0, 0, visibleX, visibleY);
+				
+				positions = p.getKey();
+				colors = p.getValue();
 				
 			}
-
+			*/
 			
-			for (int currentPixel = 0; currentPixel < positions.size(); currentPixel ++) {
-				gc.setFill(colors.get(currentPixel));
-				gc.fillRect(positions.get(currentPixel)[0], positions.get(currentPixel)[1], 5, 5);
+			//for (int currentPixel = 0; currentPixel < positions.size(); currentPixel ++) {
+			
+				/*
+				 * update the x and y here so that the positions array dont have to be updated in a seperate loop
+				*/
+				//gc.setFill(colors.get(currentPixel));
+				//gc.fillRect(positions.get(currentPixel)[0], positions.get(currentPixel)[1], 5, 5);
 
-			}
+			//}
 			
 		}
 		
 	}
-	
-	public void initialUpdate() {
-		
-		
-		
-		int[][] positions = children.get(0).getInitialGamePixelPositions();
-		Color[] colors = children.get(0).getInitialPixelColor();
-
-		for (int currentPixel = 0; currentPixel < positions.length; currentPixel ++) {
-
-			gc.setFill(colors[currentPixel]);
-			gc.fillRect(positions[currentPixel][0], positions[currentPixel][1], 5, 5);
-
-		}
-		
-	}
-
-	
-	/*
-	public void initalUpdate() {
-
-		int[][] positions = child.getInitialGamePixelPositions();
-		Color[] colors = child.getInitialPixelColor();
-
-		for (int currentPixel = 0; currentPixel < positions.length; currentPixel ++) {
-
-			gc.setFill(colors[currentPixel]);
-			gc.fillRect(positions[currentPixel][0], positions[currentPixel][1], 5, 5);
-
-		}
-
-    }
-	*/
 	
 	public void fill(Color color) {
 		
 		gc.setFill(color);
 
 		for (int i = 0; i < 270; i++) {
+			
 			for (int j = 0; j < 640; j++) {
 				
 				gc.fillRect(j, i, 1, 1);
@@ -205,5 +239,14 @@ public class Scene extends Canvas {
 		
 	}
 	
-	
+	public void tempDraw(ArrayList<int[]> pos, ArrayList<Color> col) {
+		
+		for (int currentPixel = 0; currentPixel < pos.size(); currentPixel ++) {
+			
+			gc.setFill(col.get(currentPixel));
+			gc.fillRect(pos.get(currentPixel)[0], pos.get(currentPixel)[1], 5, 5);
+
+		}
+		
+	}
 }

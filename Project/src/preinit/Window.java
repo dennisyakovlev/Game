@@ -23,10 +23,7 @@ public class Window extends Application {
 		
 		InitValue.setMainPane(pane);
 		
-		Canvas c = new Canvas(Constant.sceneWidth, Constant.sceneHeight);
-		pane.getChildren().add(c);
-		
-		pane.setPrefSize(Constant.sceneWidth, Constant.sceneHeight);
+		pane.setPrefSize(630, 260);
 		
         primaryStage.setTitle("Game");
         primaryStage.initStyle(StageStyle.DECORATED);

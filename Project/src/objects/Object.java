@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import exceptions.ImageException;
 import exceptions.Warn;
 import javafx.scene.paint.Color;
+import javafx.util.Pair;
 import variables.Constant;
 
 public class Object {
@@ -28,13 +29,12 @@ public class Object {
 	private BufferedImage image;
 	private ArrayList<Color> colorsTemp = new ArrayList<>();
 	private ArrayList<int[]> positionsTemp = new ArrayList<>();
-	//private int[][] positions;
-	private Color[] colors;
+	private ArrayList<int[]> positions = new ArrayList<>();
 	private boolean removeBackground = false, setImage = false, process = false;
 	private int importance;
 	private int length;
 	private int leftMostPixel, rightMostPixel, topMostPixel, bottomMostPixel;
-	private int[][] gamePositions;
+
 	
 	
 	public Object(int x, int y, String fileName, String objectName) {
@@ -82,8 +82,8 @@ public class Object {
 						
 						colorsTemp.add(Color.rgb(pixelColor.getRed(), pixelColor.getGreen(), pixelColor.getBlue()));
 						positionsTemp.add(new int[] {j, i});
-
-					}
+						
+					} 
 					
 				}
 				
@@ -91,6 +91,8 @@ public class Object {
 			}
 			
 		}				 
+		
+		
 		
 	}
 	
@@ -126,20 +128,15 @@ public class Object {
 	
 	public void process() {
 		
+		// *** warn if method is called twice on same object ***
 		if (process) {
 			Warn.warn("redundant operation on " + this + " process");
 		}
 		
 		process = true;
+		// ***
 		
-		if (positionsTemp.size() != colorsTemp.size()) {
-			throw new ImageException("yurr not supposed to see this shoot it if this appears");
-		}
-		
-		//positions = new int[positionsTemp.size()][2];
-		gamePositions = new int[positionsTemp.size()][2];
-		colors = new Color[colorsTemp.size()];
-		
+		// *** get actual width of image after background (whether it has or hasnt been removed) is removed ***
 		leftMostPixel = positionsTemp.get(0)[0];
 		rightMostPixel = positionsTemp.get(0)[0];
 		
@@ -152,67 +149,36 @@ public class Object {
 			rightMostPixel = Math.max(rightMostPixel, positionsTemp.get(i)[0]);
 			
 			topMostPixel = Math.min(topMostPixel, positionsTemp.get(i)[1]);
-			bottomMostPixel = Math.max(topMostPixel, positionsTemp.get(i)[1]);		
+			bottomMostPixel = Math.max(bottomMostPixel, positionsTemp.get(i)[1]);		
 			
 		}
 		
 		width = rightMostPixel - leftMostPixel + 1;
 		height = bottomMostPixel - topMostPixel + 1;
+		// ***
 		
-		for (int i = 0; i < gamePositions.length; i++) {
+		length = positionsTemp.size();
+		
+		// *** change the actual positions of the pixels to the positions theyre going to be displayed
+		for (int i = 0; i < positionsTemp.size(); i++) {
 			
-			colors[i] = colorsTemp.get(i);	
-			/*
-			 * actually sets the positions the squares will be in
-			 */
-			//gamePositions[i] = new int[] {((positionsTemp.get(i)[0] - leftMostPixel) * 5) + x, ((positionsTemp.get(i)[1] - topMostPixel) * 5) + y}; actual code
-			gamePositions[i] = new int[] {((positionsTemp.get(i)[0] - leftMostPixel) * 5), ((positionsTemp.get(i)[1] - topMostPixel) * 5)}; 
+			positions.add(new int[] {((positionsTemp.get(i)[0] - leftMostPixel) * 5) + x, ((positionsTemp.get(i)[1] - topMostPixel) * 5) + y});
 			
 		}
+		// ***
 		
-		length = gamePositions.length;
 	}		
 	
 	public ArrayList<int[]> getPositions() {
 		
-		ArrayList<int[]> temp = new ArrayList<>(Arrays.asList(gamePositions));
-		
-		return temp;
+		return positions;
 		
 	}
 	
 	public ArrayList<Color> getColors() {
 		
-		ArrayList<Color> temp = new ArrayList<>(Arrays.asList(colors));
+		return colorsTemp;
 		
-		return temp;
-		
-	}
-	
-	public int[][] getInitialGamePixelPositions() {
-		
-		/*
-		int[][] temp = new int[positions.length][2];
-		
-		for (int i = 0; i < positionsTemp.size(); i++) {
-			temp[i] = new int[] {(positions[i][0] * 5) +  x, (positions[i][1] * 5) + y};
-		}	
-		*/
-		
-		return gamePositions;
-	}
-	
-	public Color[] getInitialPixelColor() {
-
-		/*
-		Color[] temp2 = new Color[colorsTemp.size()];
-		
-		for (int i = 0; i < colorsTemp.size(); i++) {
-			temp2[i] = colorsTemp.get(i);
-		}
-		*/
-		
-		return colors;
 	}
 	
 	public void check() {
@@ -224,27 +190,51 @@ public class Object {
 	}
 	
 	public int getX() {
+		
 		return x;
+		
 	}
 	
 	public int getY() {
+		
 		return y;
+		
 	}
 
-	public int getPixelWidth() {
+	public int getActualWidth() {
+		
+		/*
+		 * returns the width of the image in pixel: 0 < width < 128
+		*/
 		return width;
+		
 	}
 	
-	public int getPixelHeight() {
+	public int getActualHeight() {
+		
+		/*
+		 * returns the height of the image in pixel: 0 < height < 54
+		*/
 		return height;
+		
 	}
 	
-	public int getGameWidthInPixels() {
+	public int getGameWidth() {
+		
+		/*
+		 * returns the width of the image being displayed on screen in pixels 0 < width < 640
+		*/
 		return width * 5;
+		
 	}
 	
-	public int getGameHeightInPixels() {
+	public int getGameHeight() {
+		
+		/*
+		 * returns the width of the image being displayed on screen in pixels 0 < height < 270
+		*/
 		return height * 5;
+		
 	}
 	
 	public int getImportance() {
@@ -258,54 +248,37 @@ public class Object {
 		return length;
 		
 	}
-
-	//something to get the necessary array from starting (x1, y1) to ending (x2, y2)
-	//in pixel values - endX <= 128 endY <= 54
-	public ArrayList<int[]> getSpecificPixels(int startX, int startY, int endX, int endY) {
-		
-		//endX -= 5;
-		//endY -= 5;
-		ArrayList<int[]> temp = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(gamePositions, (roundUp(startY) * width) + roundUp(startX), 1 + (roundUp(endY) * width) + roundUp(endX))));
+	
+	public Pair<ArrayList<int[]>, ArrayList<Color>> test(int startX, int startY, int endX, int endY) {
 		
 		ArrayList<int[]> pos = new ArrayList<>();
+		ArrayList<Color> c = new ArrayList<>();
 		
-		for (int i = roundUp(startY); i < roundUp(endY); i++) {
+		Pair<ArrayList<int[]>, ArrayList<Color>> pair = new Pair<ArrayList<int[]>, ArrayList<Color>>(pos, c);
+		
+		for (int i = 0; i < positions.size(); i++) {
 			
-			for (int j = roundUp(startX); j < roundUp(endX); j++) {
+			final int[] arr = positions.get(i);
+			final int x = arr[0];
+			final int y = arr[1];
+			
+			if (x >= startX + this.x && x < endX + this.x && y >= startY + this.y && y < endY+ this.y) {
 				
-				pos.add(gamePositions[(i * width) + j]);
+				pos.add(new int[] {arr[0], arr[1]});
+				c.add(colorsTemp.get(i));
 				
 			}
 			
 		}
 		
-		//System.out.println(gamePositions[gamePositions.length - 1][0]);
-		//System.out.println(temp.get(temp.size() - 1)[0]);
-		
-		return pos;
+		return pair;
 		
 	}
 	
-	public ArrayList<Color> getSpecificColors(int startX, int startY, int endX, int endY) { 
+	public String getName() {
 		
-		//endX -= 5;
-		//endY -= 5;
-		//return new ArrayList<>(Arrays.asList(Arrays.copyOfRange(colors, (roundUp(startY) * width) + roundUp(startX), 1 + (roundUp(endY) * width) + roundUp(endX))));
+		return objectName;
 		
-		ArrayList<Color> c = new ArrayList<>();
-		
-		for (int i = roundUp(startY); i < roundUp(endY); i++) {
-			
-			for (int j = roundUp(startX); j < roundUp(endX); j++) {
-				
-				c.add(colors[(i * width) + j]);
-				
-			}
-			
-		}
-		
-		
-		return c;
 	}
 	
 	public void setImportance(int importance) {
@@ -331,29 +304,9 @@ public class Object {
 		return ((int) Math.ceil(num / 5.0));
 		
 	}
+
+	/*
+	 * need translate methods that allow gameobject to move, otherwise test method will not work
+	 * because positions array is the array of the initial positions only and isnt update with x y
+	 */
 }
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-useful dont touch
-
-					
-if (Math.abs(pixelColor.getGreen() - pixelColor.getGreen()) > 2 && Math.abs(pixelColor.getRed() - colorToRemove.getRed()) > 2 && Math.abs(pixelColor.getBlue() - colorToRemove.getBlue()) > 2) {
-	pixelsTemp.add(Color.rgb(pixelColor.getRed(), pixelColor.getGreen(), pixelColor.getBlue()));
-	positionsTemp.add(new int[] {j, i});
-}
-					
-				
-
-*/
