@@ -51,18 +51,13 @@ public abstract class Start {
 		c.process();
 
 
-		// this can be deleted
-		Object d = new Object(30, 120, "character test.png", "character - test 1");
-		d.setImage();
-		d.removeBackground(Color.rgb(255, 255, 255));
-		d.process();
+
 
 		
 		Scene scene = new Scene();
 		scene.addObject(b, 4);
 		scene.addObject(e, 1);
 		scene.addObject(c, 0);
-		scene.addObject(d, 5);
 		scene.update();
 		scene.add();
 	}
