@@ -1,6 +1,8 @@
 package init;
 
 import javafx.scene.paint.Color;
+import levels.one.Level;
+import objects.GameObject;
 import objects.Object;
 import scene.Scene;
 
@@ -34,22 +36,30 @@ public abstract class Start {
 
 	public static void firstMethod() {
 		
+		/*
+		 * for Mekael
+		 * 
+		 * you don't currently care about everything ive added other than
+		 * what ill tell you if you dont wake up ill leave it here
+		 */
 
-		Object e = new Object(-634, 0, "background.png", "bg4");
-		e.setImage();
-		e.removeBackground(Color.BLACK);
-		e.process();
-
-		Object b = new Object(-100, 100, "tree2.png", "tree");
-		b.setImage();
-		b.removeBackground(Color.rgb(0, 0, 0));
-		b.process();
+		GameObject background = new GameObject(0, 0, "background.png", "background");
+		background.setImage();
+		background.removeBackground(null);
+		background.process();
+		
+		GameObject tree = new GameObject(0, 0, "tree2.png", "tree");
+		tree.setImage();
+		tree.removeBackground(Color.BLACK);
+		tree.process();
 		
 		Scene scene = new Scene();
-		scene.addObject(b, 4);
-		scene.addObject(e, 1);
+		scene.addObject(background, 1);
+		scene.addObject(tree, 2);
 		scene.update();
 		scene.add();
+
+		
 	}
 	
 }

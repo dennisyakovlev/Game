@@ -299,12 +299,6 @@ public class Object {
 		
 	}
 
-	private int roundUp(int num) {
-		
-		return ((int) Math.ceil(num / 5.0));
-		
-	}
-
 	/*
 	 * need translate methods that allow gameobject to move, otherwise test method will not work
 	 * because positions array is the array of the initial positions only and isnt update with x y

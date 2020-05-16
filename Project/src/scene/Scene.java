@@ -69,15 +69,6 @@ public class Scene extends Canvas {
 		
 	}
 	
-	public void test() {
-		
-		for (Object o : children) {
-			System.out.println(o.getImportance());
-		}
-		System.out.println();
-		
-	}
-	
 	public void update() {
 		
 		gc.clearRect(0,	0, 640, 270);
@@ -129,99 +120,6 @@ public class Scene extends Canvas {
 				
 			}
 			
-			
-			/*
-			 * check1 ? (check2 ? true1 : check3 ? true2 : false1) : false2
-			 * 
-			 * check1 - is any part of X of image on screen?
-			 * check1 - is any part of X of image on screen?
-			 * check3 - is part of the image off the window?
-			 * 
-			 * true1 - image flows past widnow to left - return the width that be drawn (-return) to end of imageX
-			 * true2 - image flows past window to right - return the width that should be drawn 0 to return
-			 * false1 - object is fully inside window
-			 * false2 - object is fully outside window 
-			 * 
-			 * between 1 inclusive and 640 inclusive
-			 */
-			//final int visibleX = (x < 640) && (x > -width) ? (x < 0 ? -(width - (width + x)) : (x + width) > 640 ? 640 - x : width) : 0; 
-			
-			/*
-			 * same properties as visibleX but for y
-			 * 
-			 * true1 - image flows past window to top - returns negative
-			 * true2 - image flows past window to bottom
-			 */
-			
-			/*
-			final int visibleY = (y < 270) && (y > -height) ? (y < 0 ? -(height - (height + y)) : (y + height) > 270 ? height - y : height) : 0;
-			
-			ArrayList<int[]> positions = new ArrayList<>();
-			ArrayList<Color> colors = new ArrayList<>();
-			Pair<ArrayList<int[]>, ArrayList<Color>> p = new Pair<ArrayList<int[]>, ArrayList<Color>>(positions, colors);
-			
-			if (visibleX == width && visibleY == height) {
-				
-				positions = child.getPositions();
-				colors = child.getColors();
-				
-			} else if (visibleX < 0 && visibleY < 0) { 
-				
-				p = child.test(-visibleX, -visibleY, width, height);
-				
-				positions = p.getKey();
-				colors = p.getValue();
-				
-			} else if (visibleX < 0 && visibleY > 0) { 
-				
-				p = child.test(-visibleX, 0, width, visibleY);
-				
-				positions = p.getKey();
-				colors = p.getValue();
-				
-			} else if (visibleX > 0 && visibleY < 0) {
-				
-				p = child.test(0, -visibleY, visibleX, height);
-				
-				positions = p.getKey();
-				colors = p.getValue();
-				
-			} else if (visibleX > 0 && visibleY > 0) {
-
-				 p = child.test(0, 0, visibleX, visibleY);
-				
-				positions = p.getKey();
-				colors = p.getValue();
-				
-			}
-			*/
-			
-			//for (int currentPixel = 0; currentPixel < positions.size(); currentPixel ++) {
-			
-				/*
-				 * update the x and y here so that the positions array dont have to be updated in a seperate loop
-				*/
-				//gc.setFill(colors.get(currentPixel));
-				//gc.fillRect(positions.get(currentPixel)[0], positions.get(currentPixel)[1], 5, 5);
-
-			//}
-			
-		}
-		
-	}
-	
-	public void fill(Color color) {
-		
-		gc.setFill(color);
-
-		for (int i = 0; i < 270; i++) {
-			
-			for (int j = 0; j < 640; j++) {
-				
-				gc.fillRect(j, i, 1, 1);
-
-			}
-			
 		}
 		
 	}
@@ -239,14 +137,4 @@ public class Scene extends Canvas {
 		
 	}
 	
-	public void tempDraw(ArrayList<int[]> pos, ArrayList<Color> col) {
-		
-		for (int currentPixel = 0; currentPixel < pos.size(); currentPixel ++) {
-			
-			gc.setFill(col.get(currentPixel));
-			gc.fillRect(pos.get(currentPixel)[0], pos.get(currentPixel)[1], 5, 5);
-
-		}
-		
-	}
 }
