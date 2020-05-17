@@ -1,6 +1,10 @@
 package init;
 
+import java.util.ArrayList;
+
+import javafx.animation.AnimationTimer;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import levels.one.Level;
 import objects.GameObject;
 import objects.Object;
@@ -34,7 +38,7 @@ import scene.Scene;
 
 public abstract class Start {
 
-	public static void firstMethod() {
+	public static void firstMethod(Stage primaryStage) {
 		
 		/*
 		 * for Mekael
@@ -43,6 +47,7 @@ public abstract class Start {
 		 * what ill tell you if you dont wake up ill leave it here
 		 */
 
+		/*
 		GameObject background = new GameObject(0, 0, "background.png", "background");
 		background.setImage();
 		background.removeBackground(null);
@@ -53,12 +58,52 @@ public abstract class Start {
 		tree.removeBackground(Color.BLACK);
 		tree.process();
 		
+		ArrayList<GameObject> t = new ArrayList<>();
+		t.add(tree);
+		
+		
 		Scene scene = new Scene();
 		scene.addObject(background, 1);
-		scene.addObject(tree, 2);
-		scene.update();
+		//scene.addObject(tree, 2);
+		scene.update(t);
 		scene.add();
-
+		*/
+		
+		GameObject tree = new GameObject(0, 0, "tree2.png", "tree");
+		tree.setImage();
+		tree.removeBackground(Color.BLACK);
+		tree.process();
+		
+		Level levelOne = new Level();
+		levelOne.addObject(tree, 1);
+		levelOne.add();
+		//levelOne.setScene(); //called to set scene and do everything necessary to show scene. should be done on program startup
+		levelOne.startLevel();
+		
+		
+		 primaryStage.setOnShowing(e -> {
+			 
+			 AnimationTimer anim = new AnimationTimer() {
+				
+				 long start = System.nanoTime();
+				 
+				@Override
+				public void handle(long now) {
+					
+					if ((now - start) / 1000000 > 3000) {
+						
+						levelOne.setScene();
+						
+					}
+					
+				}
+			};
+				
+			anim.start();	
+		});
+		
+		
+		 primaryStage.show();
 		
 	}
 	

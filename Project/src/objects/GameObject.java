@@ -20,14 +20,20 @@ public class GameObject extends Object {
 	}
 	
 	public void translateY(int val) {
-		
+
 		
 		
 	}
 	
 	public void translateX(int val) {
 		
+		for (int i = 0; i < getPositions().size(); i++) {
+			
+			getPositions().set(i, new int[] {getPositions().get(i)[0] + val, getPositions().get(i)[1]});
+			
+		}
 		
+		setX(getX() + val);
 		
 	}
 	

@@ -29,11 +29,19 @@ public class Window extends Application {
         primaryStage.initStyle(StageStyle.DECORATED);
         Scene scene = new Scene(pane);
         
+        /*
+ primaryStage.setOnShowing(e -> {
+			
+			System.out.println("grrr");
+			
+		});
+        */
+        
         primaryStage.setScene(scene);  
-        primaryStage.show();
+        //primaryStage.show();
 
-             
-        Start.firstMethod();
+       
+        Start.firstMethod(primaryStage);
 	}
 
 

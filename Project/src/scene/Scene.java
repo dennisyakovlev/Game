@@ -18,13 +18,16 @@ import variables.Program;
  * - if an object has width 100 and x positions of > 540 then the pixels of ONLY the square that go off the screen will be displayed off the screen
  * 
 */
+
+/*
+ * scene will "scroll" across level of game
+ */
 public class Scene extends Canvas {
 	
 	private GraphicsContext gc;
 	
 	//list of children with highest importance (at front of scene) descending to lowst importance (at back of scene)
 	private ArrayList<Object> children = new ArrayList<>();
-	private int[] pixelAssist = new int[6912];
 	
 	public Scene() {
 		
@@ -69,18 +72,19 @@ public class Scene extends Canvas {
 		
 	}
 	
-	public void update() {
+	public void update(ArrayList<Integer> toShow) {
 		
 		gc.clearRect(0,	0, 640, 270);
 
-		for (int i = children.size() - 1; i >= 0; i--) {
+		//System.out.println("updting");
+
+		for (int i = toShow.size() - 1; i >= 0; i--) {
 			
-			final Object child = children.get(i);
+			final Object child = children.get(toShow.get(i));
 			final int x = child.getX();
 			final int y = child.getY();
 			final int width = child.getGameWidth();
 			final int height = child.getGameHeight();
-			
 
 			/*
 			 * each variable must be independant
@@ -98,7 +102,7 @@ public class Scene extends Canvas {
 			int endY = y + height > 270 ? 270 - y : (y + height <= 0 ? -1000000 : height);
 			
 			if (startX != -1000000 && startY != -1000000 && endX != -1000000 && endY != -1000000) {
-				
+
 				ArrayList<int[]> positions = new ArrayList<>();
 				ArrayList<Color> colors = new ArrayList<>();
 				Pair<ArrayList<int[]>, ArrayList<Color>> p = new Pair<ArrayList<int[]>, ArrayList<Color>>(positions, colors);
@@ -107,7 +111,7 @@ public class Scene extends Canvas {
 				
 				positions = p.getKey();
 				colors = p.getValue();
-				
+
 				for (int currentPixel = 0; currentPixel < positions.size(); currentPixel ++) {
 					
 					/*
@@ -122,6 +126,7 @@ public class Scene extends Canvas {
 			
 		}
 		
+		System.out.println("a");
 	}
 	
 	public void add() {
@@ -137,4 +142,9 @@ public class Scene extends Canvas {
 		
 	}
 	
+	public ArrayList<Object> getChildren() {
+		
+		return children;
+		
+	}
 }
