@@ -80,27 +80,9 @@ public abstract class Start {
 		//levelOne.setScene(); //called to set scene and do everything necessary to show scene. should be done on program startup
 		levelOne.startLevel();
 		
-		
-		 primaryStage.setOnShowing(e -> {
-			 
-			 AnimationTimer anim = new AnimationTimer() {
-				
-				 long start = System.nanoTime();
-				 
-				@Override
-				public void handle(long now) {
-					
-					if ((now - start) / 1000000 > 3000) {
+
 						
-						levelOne.setScene();
-						
-					}
-					
-				}
-			};
-				
-			anim.start();	
-		});
+
 		
 		
 		 primaryStage.show();

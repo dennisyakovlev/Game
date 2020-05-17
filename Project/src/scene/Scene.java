@@ -125,8 +125,7 @@ public class Scene extends Canvas {
 			}
 			
 		}
-		
-		System.out.println("a");
+
 	}
 	
 	public void add() {

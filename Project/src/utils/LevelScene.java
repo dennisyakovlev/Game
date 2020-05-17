@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import levels.one.Level;
 import objects.GameObject;
+import objects.Object;
 import scene.Scene;
 
 /*
@@ -18,10 +19,16 @@ import scene.Scene;
  * need array list of game objects that are near the scene
  */
 public class LevelScene extends Scene {
+	
+	private ArrayList<GameObject> test = new ArrayList<>();
 
-	private int positionOnLevel = 0;
-	private ArrayList<GameObject> allChildren = new ArrayList<>();
-	private Level oof;
+	@Override
+	public void addObject(Object child, int importance) {
+		
+		test.add((GameObject) child);
+		
+		super.addObject(child, importance);
+	}
 	
 	public void update() {
 		
@@ -32,22 +39,12 @@ public class LevelScene extends Scene {
 		ArrayList<Integer> objectsToShow = new ArrayList<>();
 		objectsToShow.add(0);
 		super.update(objectsToShow);
-		
-		/*
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		oof.startLevel();
-		*/
+
 	}
 	
-	public void set(Level l) {
+	public ArrayList<GameObject> getGameChildren() {
 		
-		oof = l;
+		return test;
 		
 	}
 	

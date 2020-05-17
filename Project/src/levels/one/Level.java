@@ -12,20 +12,6 @@ public class Level extends LevelScene implements GameLoopInterface {
 
 	private ArrayList<GameObject> test = new ArrayList<>();
 	
-	public Level() {
-		
-		set(this);
-		
-	}
-
-	@Override
-	public void addObject(Object child, int importance) {
-		
-		test.add((GameObject) child);
-		
-		super.addObject(child, importance);
-	}
-	
 	@Override
 	public void collisionLogic() {
 		
@@ -46,20 +32,7 @@ public class Level extends LevelScene implements GameLoopInterface {
 	@Override
 	public void startLevel() {
 		
-		collisionLogic();
-		animatations();
-		update();
-		//startLevel();
-		
-		System.out.println("b");
-		
-		//startLevel();
-		
-	}
-	
-	@Override
-	public void setScene() {
-		
+		test = getGameChildren();
 		
 		AnimationTimer anim = new AnimationTimer() {
 			
@@ -74,8 +47,7 @@ public class Level extends LevelScene implements GameLoopInterface {
 		};
 
 		anim.start();
-	}
 
-	
+	}
 	
 }
