@@ -85,6 +85,7 @@ public abstract class Start {
 
 		
 		
+		
 		 primaryStage.show();
 		
 	}
