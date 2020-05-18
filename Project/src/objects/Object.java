@@ -5,10 +5,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -16,28 +15,142 @@ import exceptions.ImageException;
 import exceptions.Warn;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
+import scenes.Scene;
 import variables.Constant;
 
+/**
+ * Is base type of child.
+ * 
+ * <br><br><STRONG>Usage</STRONG>
+ * <br> Object object = new Object(params);
+ * <br> object.setImage();
+ * <br> object.removeBackground(color);
+ * <br> object.process();
+ * 
+ * <br><br><STRONG>Notes</STRONG>
+ * <br> 1) Pixel is pixel on screen of computer. GamePixel is 5 by 5
+ * pixels.
+ * 
+ * @author Dennis
+ *
+ */
 public class Object {
 
-	//in pixel 0 <= x < 640 and 0 <= y < 270
-	private int x, y;
-	//in pixel 0 <= x <= 128 and 0 <= y <= 54
-	private int width, height;
+	/**
+	 * The x coordinate of the left post pixel of an object relative
+	 * to the left most pixel of the {@linkplain Scene} it is added to.
+	 */
+	private int x;
 	
-	private String fileName, objectName;
+	/**
+	 * The y coordinate of the top post pixel of an object relative
+	 * to the top most pixel of the {@linkplain Scene} it is added to.
+	 */
+	private int y;
+
+	/**
+	 * The difference between the right most pixel and left most pixel
+	 * of the object. Has value 0 <= width <= 128.
+	 */
+	private int width;
+	
+	/**
+	 * The difference between the bottom most pixel and top most pixel
+	 * of the object. Has value 0 <= height <= 54.
+	 */
+	private int height;
+	
+	/**
+	 * The file name of picture to be converted into an object.
+	 */
+	private String fileName;
+	
+	/**
+	 * The name chosen to be given to the object. Should be unique 
+	 * to all other objects in the same {@linkplain Scene} (currently no check for this)
+	 */
+	private String objectName;
+	
+	/**
+	 * The package in {@linkplain images} that the images are located for the 
+	 * desired {@linkplain Scene}
+	 */
+	private String sectionName;
+	
+	/**
+	 * Image of size 128 by 54 pixels.
+	 */
 	private BufferedImage image;
-	private ArrayList<Color> colorsTemp = new ArrayList<>();
+	
+	/**
+	 * An {@linkplain ArrayList} of type {@linkplain Color}. Each index contains 
+	 * the color of the pixel at that index. The first index corresponds to the
+	 * color of the first index in {@linkplain Object#positions}
+	 */
+	private ArrayList<Color> colors = new ArrayList<>();
+	
+	/**
+	 * An {@linkplain ArrayList} of type {@linkplain Array}. Each index contains the 
+	 * x and y position of the pixel associated with that index. Not for display as the
+	 * positions are not scaled properly.
+	 */
 	private ArrayList<int[]> positionsTemp = new ArrayList<>();
+	
+	/**
+	 * An {@linkplain ArrayList} of type {@linkplain Array}. Each index contains the 
+	 * x and y position of the game pixel associated with that index. The first index
+	 * would be the displayed on the very top row of pixels and be the pixel on
+	 * the very left of the row.
+	 */
 	private ArrayList<int[]> positions = new ArrayList<>();
 	private boolean removeBackground = false, setImage = false, process = false;
+	
+	/**
+	 * The value only associated with the current Object. Determines what other Objects
+	 * will be displayed in front of or behind the current Object.
+	 */
 	private int importance;
+	
+	/**
+	 * The number of pixels the processed object has.
+	 */
 	private int length;
-	private int leftMostPixel, rightMostPixel, topMostPixel, bottomMostPixel;
+	
+	/**
+	 * The pixel of the object that is further left than any other
+	 * pixel of the object.
+	 */
+	private int leftMostPixel;
+	
+	/**
+	 * The pixel of the object that is further right than any other
+	 * pixel of the object.
+	 */
+	private int rightMostPixel;
+	
+	/**
+	 * The pixel of the object that is further upwards than any other
+	 * pixel of the object.
+	 */
+	private int topMostPixel;
+	
+	/**
+	 * The pixel of the object that is further downwards than any other
+	 * pixel of the object.
+	 */
+	private int bottomMostPixel;
 
 	
-	
-	public Object(int x, int y, String fileName, String objectName) {
+	/**
+	 * Constructor 
+	 * 
+	 * @param x {@linkplain Object#x}
+	 * @param y {@linkplain Object#y}
+	 * @param sectionName {@linkplain Object#sectionName}
+	 * @param fileName {@linkplain Object#fileName}
+	 * @param objectName {@linkplain Object#objectName}
+	 */
+	public Object(int x, int y, String sectionName, String fileName, String objectName) {
 		
 		if (fileName.equals("") || objectName.equals("")) {
 			throw new ImageException("names cannot be empty");
@@ -46,11 +159,20 @@ public class Object {
 		this.x = x;
 		this.y = y;
 		this.fileName = fileName;
+		this.sectionName = sectionName;
 		this.objectName = objectName;
 		
 	}
 	
-	public void removeBackground(Color colorToRemove) {
+	/**
+	 * 
+	 * Removes all pixels of selected <i>color</i> to be not included
+	 * in the object. 
+	 * 
+	 * @param color All pixels of specified {@linkplain Color} in the object
+	 * will not be added to {@linkplain Object#colorsTemp} and {@linkplain Object#positions}.
+	 */
+	public void removeBackground(Color color) {
 		
 		if (removeBackground) {
 			Warn.warn("redundant operation on " + this + " removeBackground");
@@ -71,16 +193,16 @@ public class Object {
 				/*
 				 * set *which* squares will actually exist
 				 */
-				if (colorToRemove == null) {
+				if (color == null) {
 					
-					colorsTemp.add(Color.rgb(pixelColor.getRed(), pixelColor.getGreen(), pixelColor.getBlue()));
+					colors.add(Color.rgb(pixelColor.getRed(), pixelColor.getGreen(), pixelColor.getBlue()));
 					positionsTemp.add(new int[] {j, i});
 					
 				} else {
 
-					if (!(Math.abs(pixelColor.getGreen() - (colorToRemove.getGreen() * 256)) < 2 && Math.abs(pixelColor.getRed() - (colorToRemove.getRed() * 256)) < 2 && Math.abs(pixelColor.getBlue() - (colorToRemove.getBlue() * 256)) < 2)) {
+					if (!(Math.abs(pixelColor.getGreen() - (color.getGreen() * 256)) < 2 && Math.abs(pixelColor.getRed() - (color.getRed() * 256)) < 2 && Math.abs(pixelColor.getBlue() - (color.getBlue() * 256)) < 2)) {
 						
-						colorsTemp.add(Color.rgb(pixelColor.getRed(), pixelColor.getGreen(), pixelColor.getBlue()));
+						colors.add(Color.rgb(pixelColor.getRed(), pixelColor.getGreen(), pixelColor.getBlue()));
 						positionsTemp.add(new int[] {j, i});
 						
 					} 
@@ -96,6 +218,9 @@ public class Object {
 		
 	}
 	
+	/**
+	 * Get image from specified directory 
+	 */
 	public void setImage() {
 		
 		if (setImage) {
@@ -109,7 +234,7 @@ public class Object {
 		
 		try {
 			classPath = new File(Object.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString();
-			inputStream = new FileInputStream(classPath + "\\src\\images\\" + fileName);
+			inputStream = new FileInputStream(classPath + "\\src\\images\\" + sectionName + "\\" + fileName);
 			image = ImageIO.read(inputStream);
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
@@ -126,6 +251,9 @@ public class Object {
 		
 	}
 	
+	/**
+	 * Complete several unrelated tasks necessary for possible usage later.
+	 */
 	public void process() {
 		
 		// *** warn if method is called twice on same object ***
@@ -169,18 +297,28 @@ public class Object {
 		
 	}		
 	
+	/**
+	 * @return returns {@linkplain Object#positions}
+	 */
 	public ArrayList<int[]> getPositions() {
 		
 		return positions;
 		
 	}
 	
+	/**
+	 * @return returns {@linkplain Object#colors}
+	 */
 	public ArrayList<Color> getColors() {
 		
-		return colorsTemp;
+		return colors;
 		
 	}
 	
+	/**
+	 * Checks whether the object has been created correctly and
+	 * the necessary methods have been called on the object.
+	 */
 	public void check() {
 		
 		if (!removeBackground || !setImage || !process) {
@@ -189,67 +327,95 @@ public class Object {
 		
 	}
 	
+	/**
+	 * @return returns {@linkplain Object#x}
+	 */
 	public int getX() {
 		
 		return x;
 		
 	}
 	
+	/**
+	 * @return returns {@linkplain Object#y}
+	 */
 	public int getY() {
 		
 		return y;
 		
 	}
 
-	public int getActualWidth() {
-		
-		/*
-		 * returns the width of the image in pixel: 0 < width < 128
-		*/
+	/**
+	 * @return returns {@linkplain Object#width}
+	 */
+	public int getWidth() {
+
 		return width;
 		
 	}
-	
-	public int getActualHeight() {
+
+	/**
+	 * @return returns {@linkplain Object#height}
+	 */
+	public int getHeight() {
 		
-		/*
-		 * returns the height of the image in pixel: 0 < height < 54
-		*/
 		return height;
 		
 	}
-	
+
+	/**
+	 * @return returns the difference between the right most and left most pixel
+	 * of the object at the window display size.
+	 */
 	public int getGameWidth() {
 		
-		/*
-		 * returns the width of the image being displayed on screen in pixels 0 < width < 640
-		*/
 		return width * 5;
 		
 	}
 	
+	/**
+	 * @return returns the difference between the bottom most and top most pixel
+	 * of the object at the window display size.
+	 */
 	public int getGameHeight() {
 		
-		/*
-		 * returns the width of the image being displayed on screen in pixels 0 < height < 270
-		*/
 		return height * 5;
 		
 	}
 	
+	/**
+	 * @return returns {@linkplain Object#importance}
+	 */
 	public int getImportance() {
-		
+
 		return importance;
 		
 	}
 
+	/**
+	 * @return returns {@linkplain Object#length}
+	 */
 	public int getNumberOfPixels() {
 		
 		return length;
 		
 	}
 	
-	public Pair<ArrayList<int[]>, ArrayList<Color>> test(int startX, int startY, int endX, int endY) {
+	/**
+	 * An imaginary square defined by the parameters is the portion of the
+	 * image that will be returned. If there are missing pixels in this square
+	 * they will be skipped over.
+	 * 
+	 * @param startX the x coordinate of the left most pixel of the portion wanted
+	 * @param startY the y coordinate of the top most pixel of the portion wanted
+	 * @param endX the x coordinate of the right most pixel of the portion wanted
+	 * @param endY the y coordinate of the bottom most pixel of the portion wanted
+	 * 
+	 * @return A pair of {@linkplain ArrayList}, the first being the game pixel positions
+	 * of the pixels in the requested "square". The second is the corresponding colors
+	 * of the pixels chosen to be returned.
+	 */
+	public Pair<ArrayList<int[]>, ArrayList<Color>> getSpecificPixels(int startX, int startY, int endX, int endY) {
 		
 		ArrayList<int[]> pos = new ArrayList<>();
 		ArrayList<Color> c = new ArrayList<>();
@@ -265,7 +431,7 @@ public class Object {
 			if (x >= startX + this.x && x < endX + this.x && y >= startY + this.y && y < endY+ this.y) {
 				
 				pos.add(new int[] {arr[0], arr[1]});
-				c.add(colorsTemp.get(i));
+				c.add(colors.get(i));
 				
 			}
 			
@@ -275,32 +441,46 @@ public class Object {
 		
 	}
 	
+	/**
+	 * @return returns {@linkplain Object#objectName}
+	 */
 	public String getName() {
 		
 		return objectName;
 		
 	}
 	
+	/**
+	 * Sets {@linkplain Object#importance}
+	 * 
+	 * @param importance {@linkplain Object#importance}
+	 */
 	public void setImportance(int importance) {
-		
+
 		this.importance = importance;
 		
 	}
 
+	/**
+	 * Sets {@linkplain Object#x}
+	 * 
+	 * @param x {@linkplain Object#x}
+	 */
 	public void setX(int x) {
 		
 		this.x = x;
 		
 	}
 	
+	/**
+	 * Sets {@linkplain Object#y}
+	 * 
+	 * @param importance {@linkplain Object#y}
+	 */
 	public void setY(int y) {
 		
 		this.y = y;
 		
 	}
 
-	/*
-	 * need translate methods that allow gameobject to move, otherwise test method will not work
-	 * because positions array is the array of the initial positions only and isnt update with x y
-	 */
 }

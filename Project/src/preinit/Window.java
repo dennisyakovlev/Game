@@ -6,11 +6,9 @@ import init.Start;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import variables.Constant;
 import variables.InitValue;
 
 public class Window extends Application {
@@ -29,19 +27,10 @@ public class Window extends Application {
         primaryStage.initStyle(StageStyle.DECORATED);
         Scene scene = new Scene(pane);
         
-        /*
- primaryStage.setOnShowing(e -> {
-			
-			System.out.println("grrr");
-			
-		});
-        */
-        
         primaryStage.setScene(scene);  
-        //primaryStage.show();
-
-       
-        Start.firstMethod(primaryStage);
+        
+        Start start = new Start();
+        start.firstMethod(primaryStage);
 	}
 
 

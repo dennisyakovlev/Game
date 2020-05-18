@@ -1,4 +1,4 @@
-package levels.one;
+package levels.two;
 
 import java.util.ArrayList;
 
@@ -32,7 +32,7 @@ public class Level extends LevelScene implements GameLoopInterface {
 	public void startLevel() {
 		
 		children = getGameChildren();
-				
+		
 		AnimationTimer anim = new AnimationTimer() {
 			
 			@Override

@@ -1,13 +1,10 @@
 package objects;
 
-
-
-
 public class GameObject extends Object {
 
-	public GameObject(int x, int y, String fileName, String objectName) {
+	public GameObject(int x, int y, String sectionName, String fileName, String objectName) {
 		
-		super(x, y, fileName, objectName);
+		super(x, y, sectionName, fileName, objectName);
 		
 		
 		

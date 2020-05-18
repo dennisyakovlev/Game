@@ -1,93 +1,68 @@
-package init;
-
-import java.util.ArrayList;
-
-import javafx.animation.AnimationTimer;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import levels.one.Level;
-import objects.GameObject;
-import objects.Object;
-import scene.Scene;
-
-/*
- * 
- * Really important note:
- * 
- * the pane that is part of window has size of 630 by 260
- * the scene which you draw on is 640 by 270
- * 
- * this is because each pixel is translated into a 5 by 5 square. When you have last square of an image paritally off the screen
- * to the left, the entire square cannot be drawn because it is viewed by javafx to be off the screen.
- * 
- * To fix this would not be hard but would slow the loops down immensily
- * 
- * My fix instead was to make the part of the scene that we view be smaller by one square of each side
- * the same error exists where if an image is entering the scene from the left (last sqaure is partially displayed)
- * it will not display until the sqaure is fully on the screen. 
- * However, since the actual view is smaller you cant see this glitch, giving the illusions the square smoothly enters
- * the scene pixel by pixel
- * 
- * this also happen when the image enters from the top
- * 
- * we cannot fix this properly, do not try to, it is a waste of time.
- * 
- * we just have to code with this in mind "an image may be on the scene but not in view"
- * 
+/* 
+ * character 115 is new line automatically
  */
 
-public abstract class Start {
+/*
+ * The javadocs are there to help us understand what is going on, when it 
+ * becomes to big to remember everything for me and so you can see what is
+ * actually going on without understanding my code. To make sure there
+ * is no confusion follow the rules. If you spot a javadoc where the rules
+ * are broken, if it is yours fix it, if it is other persons then inform them.
+ * If something is unclear in the javadoc (like what a parameter is) tell the
+ * person who owns the javadoc. 
+ * 
+ * Some of the javadoc rules (because i picked them to make it easy to understand): 
+ * 
+ * - When referring to the specific instance of a class while creating
+ *   the javadoc inside that class use the class name with all lower case letter.
+ * - When referring to the class while creating the javadoc inside that class use 
+ *   the exact class name
+ * - When referring to class outside of the class, use a link
+ * - When referring to method parameter in the method description use italics.
+ * - Try to only link something once in a description
+ *   Like don't link Object 6 times in the same explanation, its obvious
+ *   which Object class you are referring to, if it is not then link it
+ *   as you think needed 
+ */
 
-	public static void firstMethod(Stage primaryStage) {
-		
-		/*
-		 * for Mekael
-		 * 
-		 * you don't currently care about everything ive added other than
-		 * what ill tell you if you dont wake up ill leave it here
-		 */
 
-		/*
-		GameObject background = new GameObject(0, 0, "background.png", "background");
-		background.setImage();
-		background.removeBackground(null);
-		background.process();
-		
-		GameObject tree = new GameObject(0, 0, "tree2.png", "tree");
-		tree.setImage();
-		tree.removeBackground(Color.BLACK);
-		tree.process();
-		
-		ArrayList<GameObject> t = new ArrayList<>();
-		t.add(tree);
-		
-		
-		Scene scene = new Scene();
-		scene.addObject(background, 1);
-		//scene.addObject(tree, 2);
-		scene.update(t);
-		scene.add();
-		*/
-		
-		GameObject tree = new GameObject(0, 0, "tree2.png", "tree");
-		tree.setImage();
-		tree.removeBackground(Color.BLACK);
-		tree.process();
-		
-		Level levelOne = new Level();
-		levelOne.addObject(tree, 1);
-		levelOne.add();
-		//levelOne.setScene(); //called to set scene and do everything necessary to show scene. should be done on program startup
-		levelOne.startLevel();
-		
+package init;
 
-						
+import init.menus.LoadMenu;
+import javafx.stage.Stage;
 
+/**
+ * The scene that is drawn on has size 640 by 270 pixels.
+ * The scene that is visible has size 630 by 260 pixels.
+ * 
+ * @author Dennis
+ *
+ */
+public class Start {
+
+	/**
+	 * First method to be called once initial setup of javafx window is complete setting up
+	 * 
+	 * @param primaryStage stage that is connected to javafx window
+	 */
+	public void firstMethod(Stage primaryStage) {
 		
+		instantiateLevels();
 		
+		LoadMenu loadMenu = new LoadMenu();
+
+		primaryStage.show();
+	}
+	
+	/**
+	 * Create all levels before main window shows
+	 */
+	private void instantiateLevels() {
 		
-		 primaryStage.show();
+		levels.one.CreateLevel one = new levels.one.CreateLevel();
+		levels.two.CreateLevel two = new levels.two.CreateLevel();
 		
 	}
+	
 	
 }
