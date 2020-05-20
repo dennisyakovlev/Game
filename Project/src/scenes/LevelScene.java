@@ -73,7 +73,7 @@ public class LevelScene extends Scene {
 		
 		
 		super.specificUpdate(childrenToDisplay);
-
+		
 	}
 	
 	/**

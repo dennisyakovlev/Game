@@ -21,7 +21,7 @@ public class Window extends Application {
 		
 		InitValue.setMainPane(pane);
 		
-		pane.setPrefSize(630, 260);
+		pane.setPrefSize(300, 150);
 		
         primaryStage.setTitle("Game");
         primaryStage.initStyle(StageStyle.DECORATED);

@@ -1,6 +1,5 @@
 package objects;
 
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +15,6 @@ import exceptions.Warn;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import scenes.Scene;
-import variables.Constant;
 
 /**
  * Is base type of child.
@@ -26,10 +24,6 @@ import variables.Constant;
  * <br> object.setImage();
  * <br> object.removeBackground(color);
  * <br> object.process();
- * 
- * <br><br><STRONG>Notes</STRONG>
- * <br> 1) Pixel is pixel on screen of computer. GamePixel is 5 by 5
- * pixels.
  * 
  * @author Dennis
  *
@@ -50,13 +44,13 @@ public class Object {
 
 	/**
 	 * The difference between the right most pixel and left most pixel
-	 * of the object. Has value 0 <= width <= 128.
+	 * of the object. Has value 0 <= width <= 640.
 	 */
 	private int width;
 	
 	/**
 	 * The difference between the bottom most pixel and top most pixel
-	 * of the object. Has value 0 <= height <= 54.
+	 * of the object. Has value 0 <= height <= 270.
 	 */
 	private int height;
 	
@@ -78,7 +72,7 @@ public class Object {
 	private String sectionName;
 	
 	/**
-	 * Image of size 128 by 54 pixels.
+	 * Image of size 640 by 270 pixels.
 	 */
 	private BufferedImage image;
 	
@@ -91,18 +85,12 @@ public class Object {
 	
 	/**
 	 * An {@linkplain ArrayList} of type {@linkplain Array}. Each index contains the 
-	 * x and y position of the pixel associated with that index. Not for display as the
-	 * positions are not scaled properly.
-	 */
-	private ArrayList<int[]> positionsTemp = new ArrayList<>();
-	
-	/**
-	 * An {@linkplain ArrayList} of type {@linkplain Array}. Each index contains the 
 	 * x and y position of the game pixel associated with that index. The first index
 	 * would be the displayed on the very top row of pixels and be the pixel on
 	 * the very left of the row.
 	 */
 	private ArrayList<int[]> positions = new ArrayList<>();
+	
 	private boolean removeBackground = false, setImage = false, process = false;
 	
 	/**
@@ -184,9 +172,9 @@ public class Object {
 			throw new ImageException("No attempt made to get image from system.");
 		}
 			
-		for (int i = 0; i < Constant.imageHeight; i++) {
+		for (int i = 0; i < 150; i++) {
 			
-			for (int j = 0; j < Constant.imageWidth; j++) {
+			for (int j = 0; j < 300; j++) {
 				
 				java.awt.Color pixelColor = new java.awt.Color(image.getRGB(j, i));
 				
@@ -196,14 +184,14 @@ public class Object {
 				if (color == null) {
 					
 					colors.add(Color.rgb(pixelColor.getRed(), pixelColor.getGreen(), pixelColor.getBlue()));
-					positionsTemp.add(new int[] {j, i});
+					positions.add(new int[] {j, i});
 					
 				} else {
 
 					if (!(Math.abs(pixelColor.getGreen() - (color.getGreen() * 256)) < 2 && Math.abs(pixelColor.getRed() - (color.getRed() * 256)) < 2 && Math.abs(pixelColor.getBlue() - (color.getBlue() * 256)) < 2)) {
 						
 						colors.add(Color.rgb(pixelColor.getRed(), pixelColor.getGreen(), pixelColor.getBlue()));
-						positionsTemp.add(new int[] {j, i});
+						positions.add(new int[] {j, i});
 						
 					} 
 					
@@ -240,13 +228,13 @@ public class Object {
 			e.printStackTrace();
 		}
 		
-		if (image.getWidth() != Constant.imageWidth || image.getHeight() != Constant.imageHeight) {
+		if (image.getWidth() != 300|| image.getHeight() != 150) {
 			
 			classPath = "";
 			inputStream = null;
 			image = null;
 			
-			throw new ImageException("Expected image of size 128px by 54px, recieved " + image.getWidth() + "px by " + image.getHeight() + "px.");
+			throw new ImageException("Expected image of size 300px by 150px, recieved " + image.getWidth() + "px by " + image.getHeight() + "px.");
 		}
 		
 	}
@@ -265,36 +253,33 @@ public class Object {
 		// ***
 		
 		// *** get actual width of image after background (whether it has or hasnt been removed) is removed ***
-		leftMostPixel = positionsTemp.get(0)[0];
-		rightMostPixel = positionsTemp.get(0)[0];
+		leftMostPixel = positions.get(0)[0];
+		rightMostPixel = positions.get(0)[0];
 		
-		topMostPixel = positionsTemp.get(0)[1];
-		bottomMostPixel = positionsTemp.get(0)[1];
+		topMostPixel = positions.get(0)[1];
+		bottomMostPixel = positions.get(0)[1];
 		
-		for (int i = 1; i < positionsTemp.size(); i++) {
+		for (int i = 1; i < positions.size(); i++) {
 			
-			leftMostPixel = Math.min(leftMostPixel, positionsTemp.get(i)[0]);
-			rightMostPixel = Math.max(rightMostPixel, positionsTemp.get(i)[0]);
+			leftMostPixel = Math.min(leftMostPixel, positions.get(i)[0]);
+			rightMostPixel = Math.max(rightMostPixel, positions.get(i)[0]);
 			
-			topMostPixel = Math.min(topMostPixel, positionsTemp.get(i)[1]);
-			bottomMostPixel = Math.max(bottomMostPixel, positionsTemp.get(i)[1]);		
+			topMostPixel = Math.min(topMostPixel, positions.get(i)[1]);
+			bottomMostPixel = Math.max(bottomMostPixel, positions.get(i)[1]);		
 			
 		}
 		
 		width = rightMostPixel - leftMostPixel + 1;
 		height = bottomMostPixel - topMostPixel + 1;
-		// ***
 		
-		length = positionsTemp.size();
+		length = positions.size();
 		
-		// *** change the actual positions of the pixels to the positions theyre going to be displayed
-		for (int i = 0; i < positionsTemp.size(); i++) {
+		for (int i = 0; i < positions.size(); i++) {
 			
-			positions.add(new int[] {((positionsTemp.get(i)[0] - leftMostPixel) * 5) + x, ((positionsTemp.get(i)[1] - topMostPixel) * 5) + y});
+			positions.set(i, new int[] {(positions.get(i)[0] - leftMostPixel) + x, (positions.get(i)[1] - topMostPixel) + y}); 
 			
 		}
-		// ***
-		
+
 	}		
 	
 	/**
@@ -360,26 +345,6 @@ public class Object {
 	public int getHeight() {
 		
 		return height;
-		
-	}
-
-	/**
-	 * @return returns the difference between the right most and left most pixel
-	 * of the object at the window display size.
-	 */
-	public int getGameWidth() {
-		
-		return width * 5;
-		
-	}
-	
-	/**
-	 * @return returns the difference between the bottom most and top most pixel
-	 * of the object at the window display size.
-	 */
-	public int getGameHeight() {
-		
-		return height * 5;
 		
 	}
 	
@@ -482,5 +447,5 @@ public class Object {
 		this.y = y;
 		
 	}
-
+	
 }

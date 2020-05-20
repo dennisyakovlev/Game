@@ -34,7 +34,7 @@ public class Button extends Object {
 	 */
 	public boolean isClickedOn(int mouseX, int mouseY) {
 		
-		return mouseX >= getX() && mouseX <= getX() + getGameWidth() && mouseY >= getY() && mouseY <= getY() + getGameHeight() ? true : false;
+		return mouseX >= getX() && mouseX <= getX() + getWidth() && mouseY >= getY() && mouseY <= getY() + getHeight() ? true : false;
 		
 	}
 

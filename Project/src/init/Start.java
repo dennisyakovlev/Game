@@ -28,41 +28,41 @@
 
 package init;
 
+import java.util.ArrayList;
+
 import init.menus.LoadMenu;
 import javafx.stage.Stage;
+import objects.Object;
 
-/**
- * The scene that is drawn on has size 640 by 270 pixels.
- * The scene that is visible has size 630 by 260 pixels.
- * 
- * @author Dennis
- *
- */
+
 public class Start {
 
-	/**
-	 * First method to be called once initial setup of javafx window is complete setting up
-	 * 
-	 * @param primaryStage stage that is connected to javafx window
-	 */
+	ArrayList<Object> children = new ArrayList<>();
+	
 	public void firstMethod(Stage primaryStage) {
 		
-		instantiateLevels();
+		levels.one.CreateLevel one = new levels.one.CreateLevel();
 		
 		LoadMenu loadMenu = new LoadMenu();
+		
+		/*
+		Object obj = new Object(0, 0, "loadmenu", "play.png", "bg");
+		obj.setImage();
+		obj.removeBackground(Color.WHITE);
+		obj.process();
+		
+		children.add(obj);
+		
+		Scene scene = new Scene();
+		scene.addObject(obj, 1);
+		scene.specificUpdate(children);
+		scene.add();
+		*/
 
+		
 		primaryStage.show();
 	}
 	
-	/**
-	 * Create all levels before main window shows
-	 */
-	private void instantiateLevels() {
-		
-		levels.one.CreateLevel one = new levels.one.CreateLevel();
-		levels.two.CreateLevel two = new levels.two.CreateLevel();
-		
-	}
-	
+
 	
 }

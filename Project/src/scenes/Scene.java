@@ -2,8 +2,6 @@ package scenes;
 
 import java.util.ArrayList;
 
-import com.sun.javafx.geom.AreaOp.AddOp;
-
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -40,20 +38,15 @@ public class Scene extends Canvas {
 	 */
 	private ArrayList<Object> children = new ArrayList<>();
 	
-	/**
-	 * Is list of children last specified in {@linkplain Scene#specificUpdate(ArrayList)}. 
-	 */
-	private ArrayList<Object> lastShow = new ArrayList<>();
-	
 	public Scene() {
 		
 		gc = this.getGraphicsContext2D();
 		
-		setWidth(640);
-		setHeight(270);
+		setWidth(300);
+		setHeight(150);
 
-		setLayoutX(-5);
-		setLayoutY(-5);
+		setLayoutX(0);
+		setLayoutY(0);
 	}
 	
 	/**
@@ -100,8 +93,7 @@ public class Scene extends Canvas {
 	}
 	
 	/**
-	 * Displays specified list of children to the scene. Used when displaying
-	 * all children is not needed.
+	 * Draws all {@linkplain Object} and each is drawn entirely onto the Scene.
 	 * 
 	 * @param toShow list of {@linkplain Object} to be drawn onto the scene. 
 	 * <br><STRONG>Note:</STRONG> Must be in same order as {@linkplain Scene#children}
@@ -110,109 +102,55 @@ public class Scene extends Canvas {
 	 */
 	public void specificUpdate(ArrayList<Object> toShow) {
 		
-		gc.clearRect(0,	0, 640, 270);
+		gc.clearRect(0,	0, 300, 150);
 		
-		lastShow = toShow;
-				
 		for (int i = toShow.size() - 1; i >= 0; i--) {
 			
 			final Object child = toShow.get(i);
-			final int x = child.getX();
-			final int y = child.getY();
-			final int width = child.getGameWidth();
-			final int height = child.getGameHeight();
 
-			/*
-			 * each variable must be independant
-			 * 
-			 * -1000000 is a value which no object position will ever have, thus,
-			 * used to show object is fully of scene in one dimension
-			 * 
-			 * EITHER startX or endX will have value of -1000000 if object is
-			 * off scene in X direction. Same for startY and endY
-			*/
-			int startX = x < 0 ? -x : (x > 640 ? -1000000 : 0);
-			int endX = x + width > 640 ? 640 - x : (x + width <= 0 ? -1000000 : width);
-			
-			int startY = y < 0 ? -y : (y > 270 ? -1000000 : 0);
-			int endY = y + height > 270 ? 270 - y : (y + height <= 0 ? -1000000 : height);
-			
-			if (startX != -1000000 && startY != -1000000 && endX != -1000000 && endY != -1000000) {
+			ArrayList<int[]> positions = child.getPositions();
+			ArrayList<Color> colors = child.getColors();
 
-				ArrayList<int[]> positions = new ArrayList<>();
-				ArrayList<Color> colors = new ArrayList<>();
-				Pair<ArrayList<int[]>, ArrayList<Color>> p = new Pair<ArrayList<int[]>, ArrayList<Color>>(positions, colors);
+			for (int currentPixel = 0; currentPixel < positions.size(); currentPixel ++) {
 				
-				p = child.getSpecificPixels(startX, startY, endX, endY);
+				final int x = positions.get(currentPixel)[0];
+				final int y = positions.get(currentPixel)[1];
 				
-				positions = p.getKey();
-				colors = p.getValue();
-
-				for (int currentPixel = 0; currentPixel < positions.size(); currentPixel ++) {
-
+				if (x >= 0 && x <= 299 && y >= 0 && y <= 149) {
+					
 					gc.setFill(colors.get(currentPixel));
-					gc.fillRect(positions.get(currentPixel)[0], positions.get(currentPixel)[1], 5, 5);
-
+					gc.fillRect(positions.get(currentPixel)[0], positions.get(currentPixel)[1], 1, 1);
+					
 				}
-				
+
 			}
-			
+						
 		}
-
+		
 	}
-
+	
 	/**
-	 * Displays all children from {@linkplain Scene#children}
-	 * <br><STRONG>Note:</STRONG> Iterates in reverse order to display
-	 * higher importance children on top of lower importance.
+	 * Draws all {@linkplain Object} onto the scene that are in {@linkplain Scene#children}.
 	 */
 	public void globalUpdate() {
+
+		gc.clearRect(0,	0, 640, 270);
 		
 		for (int i = children.size() - 1; i >= 0; i--) {
 			
 			final Object child = children.get(i);
-			final int x = child.getX();
-			final int y = child.getY();
-			final int width = child.getGameWidth();
-			final int height = child.getGameHeight();
 
-			/*
-			 * each variable must be independant
-			 * 
-			 * -1000000 is a value which no object position will ever have, thus,
-			 * used to show object is fully of scene in one dimension
-			 * 
-			 * EITHER startX or endX will have value of -1000000 if object is
-			 * off scene in X direction. Same for startY and endY
-			*/
-			int startX = x < 0 ? -x : (x > 640 ? -1000000 : 0);
-			int endX = x + width > 640 ? 640 - x : (x + width <= 0 ? -1000000 : width);
-			
-			int startY = y < 0 ? -y : (y > 270 ? -1000000 : 0);
-			int endY = y + height > 270 ? 270 - y : (y + height <= 0 ? -1000000 : height);
-			
-			if (startX != -1000000 && startY != -1000000 && endX != -1000000 && endY != -1000000) {
+			ArrayList<int[]> positions = child.getPositions();
+			ArrayList<Color> colors = child.getColors();
 
-				ArrayList<int[]> positions = new ArrayList<>();
-				ArrayList<Color> colors = new ArrayList<>();
-				Pair<ArrayList<int[]>, ArrayList<Color>> p = new Pair<ArrayList<int[]>, ArrayList<Color>>(positions, colors);
+			for (int currentPixel = 0; currentPixel < positions.size(); currentPixel ++) {
 				
-				p = child.getSpecificPixels(startX, startY, endX, endY);
-				
-				positions = p.getKey();
-				colors = p.getValue();
+				gc.setFill(colors.get(currentPixel));
+				gc.fillRect(positions.get(currentPixel)[0], positions.get(currentPixel)[1], 1, 1);
 
-				for (int currentPixel = 0; currentPixel < positions.size(); currentPixel ++) {
-					
-					/*
-					 * update the x and y here so that the positions array dont have to be updated in a seperate loop
-					*/
-					gc.setFill(colors.get(currentPixel));
-					gc.fillRect(positions.get(currentPixel)[0], positions.get(currentPixel)[1], 5, 5);
-
-				}
-				
 			}
+				
+			
 			
 		}
 		
@@ -226,50 +164,18 @@ public class Scene extends Canvas {
 
     }
 	
-	public void toFront() {
-		
-	}
-	
-	/**
-	 * Hides the scene from view on the javafx window. 
-	 */
-	public void hide() {
-		
-		gc.clearRect(0,	0, 640, 270);
-		
-	}
-	
-	/**
-	 * POTENTIALLY BUGGY
-	 * <br> Displays the scene if it is currently hidden.
-	 * 
-	 * @param global Whether to display the scene globally (true) or only
-	 * a specific portion (false). If false, will display last portion selected 
-	 * in {@linkplain Scene#specificUpdate(ArrayList)}.
-	 * <br><STRONG>Note:</STRONG> If specific show is requested and {@linkplain Scene#lastShow}
-	 * has not been assigned value, {@linkplain NullPointerException} will happen.
-	 */
-	public void show(boolean global) {
-		
-		if (global) {
-			
-			globalUpdate();
-			
-		} else {
-			
-			specificUpdate(lastShow);
-			
-		}
-		
-		
-	}
-	
 	/** 
 	 * @return returns {@linkplain Scene#children}
 	 */
 	public ArrayList<Object> getChildren() {
 		
 		return children;
+		
+	}
+	
+	public void hide() {
+		
+		gc.clearRect(0,	0, 640, 270);
 		
 	}
 }
