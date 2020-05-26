@@ -129,15 +129,42 @@ public class Object {
 	 */
 	private int bottomMostPixel;
 
+	public Object() {
+		
+	}
+	
+	/**
+	 * Manually create object with using multiple objects.
+	 * 
+	 * @param x see {@linkplain Object#x}
+	 * @param y see {@linkplain Object#y}
+	 * @param objectName see {@linkplain Object#objectName}
+	 * @param positions see {@linkplain Object#positions}
+	 * @param colors see {@linkplain Object#colors}
+	 */
+	public void createMadeObject(int x, int y, String objectName, ArrayList<int[]> positions, ArrayList<Color> colors) {
+		
+		this.x = x;
+		this.y = y;
+		this.objectName = objectName;
+		
+		this.positions = positions;
+		this.colors = colors;
+		
+		setImage = true;
+		removeBackground = true;
+		process = true;
+		
+	}
 	
 	/**
 	 * Constructor 
 	 * 
-	 * @param x {@linkplain Object#x}
-	 * @param y {@linkplain Object#y}
-	 * @param sectionName {@linkplain Object#sectionName}
-	 * @param fileName {@linkplain Object#fileName}
-	 * @param objectName {@linkplain Object#objectName}
+	 * @param x see {@linkplain Object#x}
+	 * @param y see {@linkplain Object#y}
+	 * @param sectionName see {@linkplain Object#sectionName}
+	 * @param fileName see {@linkplain Object#fileName}
+	 * @param objectName see {@linkplain Object#objectName}
 	 */
 	public Object(int x, int y, String sectionName, String fileName, String objectName) {
 		
@@ -446,6 +473,13 @@ public class Object {
 	public void setY(int y) {
 		
 		this.y = y;
+		
+	}
+	
+	
+	public void setPositions(ArrayList<int[]> arr) {
+		
+		positions = arr;
 		
 	}
 	

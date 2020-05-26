@@ -45,9 +45,9 @@ public class Start {
 		
 		
 		levels.one.CreateLevel one = new levels.one.CreateLevel();
-		
+		//System.out.println("done");
 		LoadMenu loadMenu = new LoadMenu();
-		
+		//System.out.println("done2");
 		
 		
 

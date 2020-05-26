@@ -8,8 +8,13 @@ public class GameObject extends Object {
 	
 	private int totalAngleInDeg = 0;
 	private ArrayList<int[]> original = new ArrayList<>();
+	private ArrayList<int[]> outSide = new ArrayList<>();
 	private boolean mustSet = true;
 	private double angleToUse;
+	
+	public GameObject() {
+		
+	}
 	
 	public GameObject(int x, int y, String sectionName, String fileName, String objectName) {
 		
@@ -17,11 +22,62 @@ public class GameObject extends Object {
 		
 	}
 	
+	public void setOutside() {
+
+		ArrayList<int[]> positions = getPositions();
+
+		outSide.add(positions.get(0));
+		
+		for (int i = 1; i < positions.size() - 1; i++) {
+			
+			final int[] previous = positions.get(i - 1);
+			final int[] current = positions.get(i);
+			final int[] next = positions.get(i + 1);
+			
+			if (next[1] != current[1] || previous[1] != current[1] || (next[0] + previous[0]) / 2 != current[0]) {
+
+				outSide.add(current);
+
+			
+			} else if (current[1] == positions.get(0)[1]) {
+				
+				outSide.add(current);
+
+				
+			}
+			
+		}
+
+		outSide.add(positions.get(positions.size() - 1));
+		
+	
+		
+	}
+	
 	public void translateY(int val) {
 
+		if (mustSet) {
+			
+			for (int[] i : getPositions()) {
+				
+				original.add(i);
+				
+			}
+			
+			mustSet = false;
+			
+		}
+		
 		for (int i = 0; i < getPositions().size(); i++) {
 			
 			getPositions().set(i, new int[] {getPositions().get(i)[0], getPositions().get(i)[1] + val});
+			original.set(i, new int[] {original.get(i)[0], original.get(i)[1] + val});
+			
+		}
+		
+		for (int i = 0; i < outSide.size(); i++) {
+			
+			outSide.set(i, new int[] {outSide.get(i)[0], outSide.get(i)[1] + val});
 			
 		}
 		
@@ -50,12 +106,34 @@ public class GameObject extends Object {
 			
 		}
 		
+		for (int i = 0; i < outSide.size(); i++) {
+			
+			outSide.set(i, new int[] {outSide.get(i)[0] + val, outSide.get(i)[1]});
+			
+		}
+		
 		setX(getX() + val);
 		
 	}
 	
 	public boolean collision(GameObject gameObject) {
+
+		ArrayList<int[]> otherOutside = gameObject.getOutsidePixels();
 		
+		for (int i = 0; i < outSide.size(); i++) {
+			
+			for (int j = 0; j < otherOutside.size(); j++) {
+
+				if ((outSide.get(i)[0] == otherOutside.get(j)[0]) && (outSide.get(i)[1] == otherOutside.get(j)[1])) {
+					
+					return true;
+					
+				}
+				
+			}
+			
+		}
+
 		return false;
 		
 	}
@@ -123,6 +201,12 @@ public class GameObject extends Object {
 	public double getCurrentAngle() {
 		
 		return angleToUse;
+		
+	}
+	
+	public ArrayList<int[]> getOutsidePixels() {
+		
+		return outSide;
 		
 	}
 	

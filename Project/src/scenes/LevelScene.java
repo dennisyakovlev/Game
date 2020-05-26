@@ -72,7 +72,7 @@ public class LevelScene extends Scene {
 	public void addObject(Object child, int importance) {
 		
 		children.add((GameObject) child);
-
+		
 		super.addObject(child, importance);
 
 	}
@@ -256,26 +256,7 @@ public class LevelScene extends Scene {
 			}
 			
 		}
-		
 
-		/*
-		for (int currentPixel = 0; currentPixel < positions.size(); currentPixel ++) {
-			
-			final int x = positions.get(currentPixel)[0];
-			final int y = positions.get(currentPixel)[1];
-			
-			if (x >= 0 && x <= 299 && y >= 0 && y <= 149) {
-				
-				gc.setFill(colors.get(currentPixel));
-				gc.fillRect(positions.get(currentPixel)[0], positions.get(currentPixel)[1], 1, 1);
-				
-			}
-
-		}				
-		*/
-		
-		
-		
 	}
 	
 	@Override

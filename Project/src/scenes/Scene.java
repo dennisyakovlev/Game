@@ -38,6 +38,8 @@ public class Scene extends Canvas {
 	 * Children with lower importance have higher index.
 	 */
 	private ArrayList<Object> children = new ArrayList<>();
+
+	
 	
 	public Scene() {
 		
@@ -154,6 +156,10 @@ public class Scene extends Canvas {
 		}
 		
 	}
+	
+	
+
+	
 	
 	/**
 	 * Adds the scene to javafx window.

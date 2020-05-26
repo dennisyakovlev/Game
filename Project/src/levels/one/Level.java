@@ -16,20 +16,28 @@ public class Level extends LevelScene implements GameLoopInterface {
 	private double total = 0;
 	private double counter = 0;
 	private double counter2 = 0;
-	long start;
+	private long start;
+	private AnimationTimer anim;
 	
 	@Override
 	public void collisionLogic() {
+		
+		if (children.get(0).collision(children.get(1))) {
+			System.out.println("ree");
+			anim.stop();
+			
+		}
 		
 	}
 
 	@Override
 	public void animatations() {
 		
-		((Vine) children.get(1)).swing(timeInMS);
+		//((Vine) children.get(1)).swing(timeInMS);
 		//children.get(0).translateX(1);
-		children.get(0).rotate(0, 1, Math.PI / 2);
-		
+		//children.get(0).rotate(0, 1, Math.PI / 2);
+		children.get(0).translateX(1);
+		//children.get(1).translateX(1);
 		
 	}
 
@@ -40,10 +48,10 @@ public class Level extends LevelScene implements GameLoopInterface {
 		show();
 		
 		children = getGameChildren();
-		
+
 		start = System.nanoTime();
 				
-		AnimationTimer anim = new AnimationTimer() {
+		anim = new AnimationTimer() {
 			
 			@Override
 			public void handle(long now) {
@@ -64,10 +72,17 @@ public class Level extends LevelScene implements GameLoopInterface {
 				last = timeInMS;
 				*/
 				
+				//if (counter == 1) {
+					
+					//stop();
+					
+				//}
+				//counter++;
+				
 				collisionLogic();
 				animatations();
 				update();
-				
+
 				/*
 				//System.out.println((now - start) / 1000000);
 				if ((now - start) / 1000000 > 2500) {
@@ -95,7 +110,7 @@ public class Level extends LevelScene implements GameLoopInterface {
 				 
 			}
 		};
-
+		//update();
 		anim.start();
 
 	}

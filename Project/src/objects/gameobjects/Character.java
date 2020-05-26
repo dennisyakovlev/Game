@@ -44,6 +44,7 @@ public class Character {
 		armFront.setImage();
 		armFront.removeBackground(Color.WHITE);
 		armFront.process();
+		armFront.setOutside();
 		
 		armBack = new GameObject(100, 0, "charcter", "arm.png", "armBack");
 		armBack.setImage();
