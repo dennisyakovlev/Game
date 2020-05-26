@@ -37,7 +37,7 @@ public class LoadMenu {
 		
 		// *** checks for mouse clicks and does necessary action if the right thing is clicked
 		scene.setOnMouseClicked(e -> {
-			
+			//System.out.println("clicked");
 			for (int i = 0; i < children.size(); i++) {
 				
 				if (children.get(i).getClass().getSimpleName().equals("Button")) {

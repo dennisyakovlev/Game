@@ -1,6 +1,8 @@
-package objects;
+package objects.gameobjects;
 
 import java.util.ArrayList;
+
+import objects.Object;
 
 /**
  * Is a vine that can swing.

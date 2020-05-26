@@ -17,7 +17,8 @@ import javafx.util.Pair;
 import scenes.Scene;
 
 /**
- * Is base type of child.
+ * Lowest level class for anything to be visually displayed in
+ * the application.
  * 
  * <br><br><STRONG>Usage</STRONG>
  * <br> Object object = new Object(params);

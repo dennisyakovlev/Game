@@ -15,15 +15,16 @@ import variables.Program;
  * <br><br><STRONG>Usage</STRONG>
  * <br> Scene scene = new Scene();
  * <br> add children to scene
- * <br> scene.globalUpdate() or scene.specificUpdate() (idk second might be buggy)
+ * <br> update the scene. Either using {@linkplain Scene#globalUpdate()} or {@linkplain Scene#specificUpdate(ArrayList)}.
  * <br> scene.add();
  * 
  * <br><br><STRONG>Notes</STRONG>
  * <br> 1) All children should be added before displaying scene
  * to stop unforeseen errors.
- * <br> 2) The scene size is 640 by 270 pixels. Only pixels 5 to
- * 635 (634 in code) for width and 5 to 265 (264 in code) are
- * visible.
+ * <br> 2) scene.hide() should be called if the scene is not wanted
+ * to be displayed upon initial start up of the program.
+ * <br> 3) The scene size is 300 by 150 pixels. 
+ * <br> 4) {@linkplain Scene#show()} and {@linkplain Scene#hide()} are buggy for SURE
  * 
  * @author Dennis
  *
@@ -101,9 +102,7 @@ public class Scene extends Canvas {
 	 * higher importance children on top of lower importance.
 	 */
 	public void specificUpdate(ArrayList<Object> toShow) {
-		
-		gc.clearRect(0,	0, 300, 150);
-		
+		//gc.clearRect(0, 0, 300, 150);
 		for (int i = toShow.size() - 1; i >= 0; i--) {
 			
 			final Object child = toShow.get(i);
@@ -134,7 +133,7 @@ public class Scene extends Canvas {
 	 */
 	public void globalUpdate() {
 
-		gc.clearRect(0,	0, 640, 270);
+		gc.clearRect(0,	0, 300, 150);
 		
 		for (int i = children.size() - 1; i >= 0; i--) {
 			
@@ -173,9 +172,28 @@ public class Scene extends Canvas {
 		
 	}
 	
+	/**
+	 * Hides the scene from the view of the user.
+	 */
 	public void hide() {
 		
 		gc.clearRect(0,	0, 640, 270);
+		toBack();
+		
+	}
+	
+	/**
+	 * Shows the scene in the javafx window.
+	 */
+	public void show() {
+		
+		toFront();
+		
+	}
+	
+	public GraphicsContext getGraphics() {
+		
+		return gc;
 		
 	}
 }

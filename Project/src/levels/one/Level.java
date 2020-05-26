@@ -3,8 +3,8 @@ package levels.one;
 import java.util.ArrayList;
 
 import javafx.animation.AnimationTimer;
-import objects.GameObject;
-import objects.Vine;
+import objects.gameobjects.GameObject;
+import objects.gameobjects.Vine;
 import utils.GameLoopInterface;
 import scenes.LevelScene;
 
@@ -26,18 +26,23 @@ public class Level extends LevelScene implements GameLoopInterface {
 	@Override
 	public void animatations() {
 		
-		((Vine) children.get(0)).swing(timeInMS);
+		((Vine) children.get(1)).swing(timeInMS);
 		//children.get(0).translateX(1);
+		children.get(0).rotate(0, 1, Math.PI / 2);
+		
 		
 	}
 
 	@Override
 	public void startLevel() {
 		
+		backgroundUpdate(1);
+		show();
+		
 		children = getGameChildren();
 		
 		start = System.nanoTime();
-		
+				
 		AnimationTimer anim = new AnimationTimer() {
 			
 			@Override
@@ -65,18 +70,18 @@ public class Level extends LevelScene implements GameLoopInterface {
 				
 				/*
 				//System.out.println((now - start) / 1000000);
-				if ((now - start) / 1000000 > 100) {
-					animatations();
-					//start = System.nanoTime();
+				if ((now - start) / 1000000 > 2500) {
+					//update();
+					start = System.nanoTime();
 					counter ++;
 					
 				}
 				
-				if (counter > 0) {
+				if (counter > 25) {
 					stop();
-					System.out.println("done");
+					//System.out.println("done");
 				}
-				
+				*/
 				//if (counter2 >= 1000) {
 				//	start = System.nanoTime();
 					////animatations();
@@ -86,7 +91,7 @@ public class Level extends LevelScene implements GameLoopInterface {
 				
 				//counter2 = timeInMS;
 				//System.out.println(counter2);
-				 * */
+				
 				 
 			}
 		};

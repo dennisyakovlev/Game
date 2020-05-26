@@ -31,8 +31,10 @@ package init;
 import java.util.ArrayList;
 
 import init.menus.LoadMenu;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import objects.Object;
+import scenes.Scene;
 
 
 public class Start {
@@ -41,23 +43,13 @@ public class Start {
 	
 	public void firstMethod(Stage primaryStage) {
 		
+		
 		levels.one.CreateLevel one = new levels.one.CreateLevel();
 		
 		LoadMenu loadMenu = new LoadMenu();
 		
-		/*
-		Object obj = new Object(0, 0, "loadmenu", "play.png", "bg");
-		obj.setImage();
-		obj.removeBackground(Color.WHITE);
-		obj.process();
 		
-		children.add(obj);
 		
-		Scene scene = new Scene();
-		scene.addObject(obj, 1);
-		scene.specificUpdate(children);
-		scene.add();
-		*/
 
 		
 		primaryStage.show();

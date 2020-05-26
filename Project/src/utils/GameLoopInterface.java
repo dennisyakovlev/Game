@@ -1,7 +1,7 @@
 package utils;
 
 import javafx.animation.AnimationTimer;
-import objects.GameObject;
+import objects.gameobjects.GameObject;
 
 /**
  * Interface needed to be able to update level and
